@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="background_material_light">#facd00</color>
+    <color name="accent_device_default_light">#facd00</color>
+    <color name="primary_dark_device_default_light">#ececec</color>
+    <color name="dsc">#ffcd00</color>
+    <color  name="dsc_primary">#ffcd00</color>
+    <color name="dsc_secondary">#fc2424</color>
+    <color name="dscStatusBarBackground">@color/dsc</color>
+    <color name="dsc_black">#0b0b0b</color>
+    <color name="dsc_accent">#ffffff</color>
+    <color name="dsc_gray">#e2e2e2</color>
+    <color name="primary_device_default_light">#fffcfc</color>
+    <color name="fab_button_gray">#ececec</color>
+</resources>

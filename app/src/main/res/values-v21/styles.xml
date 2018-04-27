@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="dsc" parent="android:Theme.DeviceDefault.Light">
+        <item name="android:colorBackground">@color/dsc_primary</item>
+        <item name="android:colorAccent">@color/accent_device_default_light</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark_device_default_light</item>
+        <item name="android:statusBarColor">@color/dscStatusBarBackground</item>
+        <item name="android:actionBarStyle">@style/actionbar</item>
+        <item name="android:popupMenuStyle">@style/menuStyle</item>
+    </style>
+</resources>

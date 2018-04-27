@@ -1,0 +1,26 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/dsc</item>
+    </style>
+
+    <style name="dsc" parent="android:ThemeOverlay.Material.ActionBar">
+        <item name="android:colorBackground">@color/dsc</item>
+        <item name="colorPrimaryDark">@color/primary_dark_device_default_light</item>
+    </style>
+    <style name="drawer" parent="dsc">
+        <item name="android:background">@color/dsc_accent</item>
+    </style>
+    <style name="actionbar" parent="dsc">
+        <item name="android:background">@color/dsc_accent</item>
+        <item name="android:textColor">@color/dsc_secondary</item>
+        <item name="android:colorPrimary">@color/primary_device_default_light</item>
+    </style>
+    <style name="menuStyle" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="android:background">@color/dsc_gray</item>
+    </style>
+</resources>
