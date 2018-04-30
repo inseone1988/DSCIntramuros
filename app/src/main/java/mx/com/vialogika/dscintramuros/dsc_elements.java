@@ -35,6 +35,8 @@ interface db{
    void onDataRetrieved();
 }
 
+
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -70,9 +72,9 @@ public class dsc_elements extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void getlist() {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteraction();
         }
     }
 
@@ -86,8 +88,7 @@ public class dsc_elements extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
-    public void getGuardsList( db mCallback) {
+    public void getGuardsList(db mCallback) {
         List<Elementos> mylist = Elementos.findWithQuery(Elementos.class,"SELECT * FROM Elementos");
         guardsList = mylist;
         mCallback.onDataRetrieved();
@@ -135,7 +136,9 @@ public class dsc_elements extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction();
+        List<Elementos> getElemList();
+        List<Apostamientos> getApostamientos();
     }
 
     public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ElementViewHolder>{
@@ -143,34 +146,8 @@ public class dsc_elements extends Fragment {
 
         private List<Elementos> mDataset;
 
-        public class ElementViewHolder extends RecyclerView.ViewHolder{
-            CardView cv;
-            TextView element_fullname;
-            TextView element_apt;
-            TextView elementid;
-            ImageView element_photo;
-            ImageView element_action_menu;
-
-           public ElementViewHolder(View view){
-                super(view);
-                cv = (CardView) view.findViewById(R.id.element_item);
-                element_photo = (ImageView) view.findViewById(R.id.person_photo);
-                element_fullname = (TextView) view.findViewById(R.id.person_name);
-                element_apt = (TextView) view.findViewById(R.id.person_apt);
-                element_action_menu = (ImageView) view.findViewById(R.id.element_menu);
-            }
-
-        }
-
         public ElementAdapter(List<Elementos> guards){
             mDataset = guards;
-        }
-
-        @Override
-        public ElementAdapter.ElementViewHolder onCreateViewHolder(ViewGroup parent,int viewtype){
-            View itemview = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.guard_item_view,parent,false);
-            return new ElementViewHolder(itemview);
         }
 
         @Override
@@ -203,7 +180,35 @@ public class dsc_elements extends Fragment {
                     holder.element_photo.setImageResource(R.drawable.profile_no_camera);
                 }
 
+            }else{
+
             }
+        }
+
+        @Override
+        public ElementAdapter.ElementViewHolder onCreateViewHolder(ViewGroup parent,int viewtype){
+            View itemview = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.guard_item_view,parent,false);
+            return new ElementViewHolder(itemview);
+        }
+
+        public class ElementViewHolder extends RecyclerView.ViewHolder{
+            CardView cv;
+            TextView element_fullname;
+            TextView element_apt;
+            TextView elementid;
+            ImageView element_photo;
+            ImageView element_action_menu;
+
+           public ElementViewHolder(View view){
+                super(view);
+                    cv = (CardView) view.findViewById(R.id.element_item);
+                    element_photo = (ImageView) view.findViewById(R.id.person_photo);
+                    element_fullname = (TextView) view.findViewById(R.id.person_name);
+                    element_apt = (TextView) view.findViewById(R.id.person_apt);
+                    element_action_menu = (ImageView) view.findViewById(R.id.element_menu);
+            }
+
         }
 
         public void deleteElement(Long element_id,int position){
@@ -230,6 +235,4 @@ public class dsc_elements extends Fragment {
         }
 
     }
-
-
 }

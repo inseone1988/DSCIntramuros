@@ -1,8 +1,12 @@
 package mx.com.vialogika.dscintramuros;
 
 import com.orm.SugarRecord;
+import com.orm.dsl.Ignore;
 
 public class Apostamientos extends SugarRecord {
+@Ignore
+private int no_apostamientos;
+
 private Long place_id;
 private Long place_client_id;
 private String apostamiento_name;
@@ -69,5 +73,13 @@ public Apostamientos(Long apId,Long cuentaId,String nombreApostamiento,String ap
 
     public void setSite_id(Long site_id) {
         this.site_id = site_id;
+    }
+
+    public int getNo_apostamientos() {
+        return no_apostamientos;
+    }
+
+    public void setNo_apostamientos(int no_apostamientos) {
+        this.no_apostamientos = no_apostamientos;
     }
 }

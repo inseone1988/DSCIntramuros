@@ -1,20 +1,21 @@
 package mx.com.vialogika.dscintramuros;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
-import android.view.ContextThemeWrapper;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.support.design.widget.FloatingActionButton;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
-import android.content.Intent;
-import android.content.Context;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+
+import java.util.List;
+
 
 interface fab{
     void setFabClickListener();
@@ -31,10 +32,8 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-
-    private boolean fabpresent = false;
-
-
+    private List<Elementos> mElementos;
+    private List<Apostamientos> mApostamientos;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,34 +51,100 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
     @Override
     protected void onResume(){
         super.onResume();
+
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    protected void onDestroy(){
+        super.onDestroy();
+        new MaterialDialog.Builder(this)
+                .title("Cerrar")
+                .content("Seguro que deseas salir de la app?")
+                .positiveText("Ok")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Intent intent = new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                })
+                .negativeText("Cancelar")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        return;
+                    }
+                })
+                .show();
+    }
 
+    @Override
+    public void onFragmentInteraction(Uri uri){
+
+    }
+
+    @Override
+    public void onFragmentInteraction() {
+
+    }
+
+    @Override
+    public List<Elementos> getElemList() {
+        new ElementsList().execute();
+        return null;
+    }
+
+    @Override
+    public List<Apostamientos> getApostamientos() {
+        new ElementsList().execute();
+        return null;
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, getFragment(position + 1))
-                .commit();
+        if(position != 3){
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, getFragment(position + 1))
+                    .commit();
+        }else{
+            if(position == 3){
+                new MaterialDialog.Builder(this)
+                        .content("Salir de la App")
+                        .positiveText("Salir")
+                        .negativeText("Cancelar")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                Intent intent = new Intent();
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }
+                        }).show();
+            }
+        }
+
+        //restoreActionBar();
     }
 
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
+                restoreActionBar();
                 break;
             case 2:
                 mTitle = getString(R.string.title_section2);
+                restoreActionBar();
                 break;
             case 3:
                 mTitle = getString(R.string.title_section3);
+                restoreActionBar();
                 break;
         }
+
     }
 
     public void restoreActionBar() {
@@ -94,87 +159,42 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
         switch(sectionid){
             case 1:
                 fragment = new fragment_dsc_plantillas();
+
                 break;
             case 2:
                 fragment = new dsc_elements();
+
                 break;
             case 3:
                 fragment = new dsc_apostamientos();
+
                 break;
         }
         return fragment;
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-        private static Integer seccion;
+    private class ElementsList extends AsyncTask<Void,Void,List<Elementos>>{
 
-        public PlaceholderFragment() {
+        protected List<Elementos> doInBackground(Void... aVoid){
+            List<Elementos> mylist = Elementos.findWithQuery(Elementos.class,"SELECT * FROM Elementos");
+            return mylist;
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            seccion = defineView(sectionNumber);
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
+        protected void onPostExecute(List<Elementos> mList){
+            mElementos = mList;
         }
 
-        public static Integer defineView(int sectionNumber){
-            int myView = 1;
-            switch(sectionNumber){
-                case 1:
-                    myView = R.layout.fragment_dsc_plantillas;
-                    break;
-                case 2:
-                    myView = R.layout.fragment_dsc_dashboard;
-                    break;
-                case 3:
-                    myView = R.layout.fragment_dsc_apostamientos;
-                    break;
-            }
-
-            return myView;
-        }
-
-        public void addElementListener(Context context){
-            Intent intent = new Intent(context,editElement.class);
-            startActivity(intent);
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-            final View rootView = inflater.inflate(seccion, container, false);
-            if (seccion == R.layout.fragment_dsc_dashboard){
-                FloatingActionButton fab = rootView.findViewById(R.id.fab);
-                fab.setOnClickListener(new View.OnClickListener(){
-                    public void onClick(View view){
-
-                      addElementListener(rootView.getContext());
-                    }
-                });
-            }
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((dsc_dashboard) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
     }
 
+    private class apostamientosList extends AsyncTask<Void,Void,List<Apostamientos>>{
+
+        protected List<Apostamientos> doInBackground(Void... aVoid){
+            List<Apostamientos> mylist = Apostamientos.findWithQuery(Apostamientos.class,"SELECT * FROM Apostamientos");
+            return mylist;
+        }
+
+        protected void  onPostExecute(List <Apostamientos> mList){
+            mApostamientos = mList;
+        }
+    }
 }

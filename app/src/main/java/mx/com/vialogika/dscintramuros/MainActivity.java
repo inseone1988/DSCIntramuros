@@ -237,6 +237,7 @@ public class MainActivity extends Activity {
                                             if(repsonse){
                                                 //Once all testings has been checked get user to user workspace
                                                 startActivity(myIntent);
+                                                finish();
                                             }else{
                                                 MainActivity.this.showMyDialog("Usuario o contraseña incorrectos");
                                             }

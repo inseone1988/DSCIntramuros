@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/elements_view_manager"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <android.support.v7.widget.CardView
         android:id="@+id/element_item"
@@ -52,5 +53,12 @@
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/no_items_label"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|center"
+        android:text="@string/no_items_to_show" />
 
 </LinearLayout>

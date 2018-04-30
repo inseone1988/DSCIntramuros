@@ -56,7 +56,10 @@
     <string name="testing_string">Sample text</string>
     <string name="camera_storage_denied_title">Camara y Almacenamiento</string>
     <string name="no_camera_no_storage">La aplicacion necesita acceder a la camara y almacenamiento del dispositivo para esta funcion, favor de habilitar estos permisos en Configuracion>Aplicaciones>DscIntramuros para que la aplicacion funcione correctamente</string>
+    <string name="no_items_to_show">No hay datos</string>
     <string name="delete_message">Estas seguro de borrar este elemento?. Esta accion no puede deshacerse.</string>
+    <string name="client_name_text">Nombre/Alias</string>
+    <string name="client_name">Ciente</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
