@@ -1,0 +1,1 @@
+ALTER TABLE Elementos ADD guardHash TEXT;

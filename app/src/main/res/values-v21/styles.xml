@@ -8,5 +8,6 @@
         <item name="android:statusBarColor">@color/dscStatusBarBackground</item>
         <item name="android:actionBarStyle">@style/actionbar</item>
         <item name="android:popupMenuStyle">@style/menuStyle</item>
+        <item name="android:spinnerItemStyle"></item>
     </style>
 </resources>

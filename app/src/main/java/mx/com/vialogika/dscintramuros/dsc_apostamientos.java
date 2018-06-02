@@ -22,6 +22,8 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,19 +102,35 @@ public class dsc_apostamientos extends Fragment {
 
     public void saveApostamiento(View v){
         String SPACE = " ";
-        Number UNO = 1;
         EditText apname = v.findViewById(R.id.ap_name);
         Spinner aptype = v.findViewById(R.id.ap_type);
         Spinner apcliente = v.findViewById(R.id.client_select);
         String ap = apname.getText().toString();
         String apType = aptype.getSelectedItem().toString();
         String apCliente = apcliente.getSelectedItem().toString();
-        Apostamientos newAp = new Apostamientos(UNO.longValue(),UNO.longValue(),apType + SPACE +  apCliente,ap,apType,UNO.longValue());
+        long siteid = Databases.siteId(apCliente);
+        long clientId = Databases.getClientId(apCliente);
+        long Apid = Databases.apCons(clientId);
+        Apostamientos newAp = new Apostamientos(0L,clientId,apType + SPACE +  apCliente,ap,apType,siteid);
         newAp.save();
+        long savedid = newAp.getId();
+        if(savedid > 0){
+            Databases.savePlantillasPlaces(savedid,getActivity());
+        }
     }
 
     public int getlistsize(){
         return aplist.size();
+    }
+
+    public ArrayList<String> cl(){
+        ArrayList<String> clients = new ArrayList<String>();
+        List<Clientes> mCl = Clientes.listAll(Clientes.class);
+        int dsize = mCl.size();
+        for(int i = 0;i < dsize; i++){
+            clients.add(mCl.get(i).getName());
+        }
+        return clients;
     }
 
     public void setApTypeSpinner(View v){
@@ -124,8 +142,9 @@ public class dsc_apostamientos extends Fragment {
     }
 
     public void setClientSpinner(View v){
-        String[] clients = new String[]{"Natura","Hersheys","Pernod Ricard","NIKE","General"};
-        ArrayAdapter<String> aa = new ArrayAdapter<String>(dsc_apostamientos.this.getActivity(),android.R.layout.simple_spinner_item,clients);
+        ArrayList<String> cl = cl();
+       // String[] clients = new String[]{"Natura","Hersheys","Pernod Ricard","NIKE","General"};
+        ArrayAdapter<String> aa = new ArrayAdapter<String>(dsc_apostamientos.this.getActivity(),android.R.layout.simple_spinner_item,cl);
         Spinner sp = v.findViewById(R.id.client_select);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(aa);

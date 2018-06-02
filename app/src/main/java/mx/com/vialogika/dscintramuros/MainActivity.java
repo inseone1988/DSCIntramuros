@@ -4,9 +4,13 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.app.Activity;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.app.AlertDialog;
@@ -19,10 +23,17 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.os.CountDownTimer;
+import android.widget.TextView;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.Request;
@@ -47,27 +58,39 @@ interface IsAllowedUser{
 }
 
 public class MainActivity extends Activity {
-    String musername;
-    String password;
     Integer serverStatus;
     String imei_number;
     Button lgbutton;
+    TextView progress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
         lgbutton = findViewById(R.id.login);
+        progress = (TextView) findViewById(R.id.progress);
         lgbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loginUser();
             }
         });
+        setVersionText();
     }
 
     private void requestPermissionForImei(){
         ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_PHONE_STATE},1);
+    }
+
+    private void setVersionText(){
+        try{
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(),0);
+            String versionName = pInfo.versionName;
+            TextView tv = findViewById(R.id.app_version_text);
+            tv.setText(versionName);
+        }catch(PackageManager.NameNotFoundException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -120,8 +143,14 @@ public class MainActivity extends Activity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Integer serverError = error.networkResponse.statusCode;
-                MainActivity.this.showMyDialog("Ha ocurrido un error de servidor  \n Response StatusCode: " + serverError.toString());
+                if(error instanceof TimeoutError || error instanceof NoConnectionError){
+                    new MaterialDialog.Builder(MainActivity.this)
+                            .title("Network error")
+                            .content("Se ha agotado el tiempo de espera de conexion con el servidor,favor de verificar la conexion a internet.")
+                            .positiveText("OK")
+                            .show();
+                }
+                progress.setText("");
             }
         });
         Volley.newRequestQueue(this).add(jsonObjectRequest);
@@ -157,13 +186,30 @@ public class MainActivity extends Activity {
                .show();
     }
 
+    public void saveUserSP(JSONObject udata)throws JSONException{
+        SharedPreferences sp = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putLong("user_id",udata.getLong("user_id"));
+        editor.putString("user_fullname",udata.getString("user_fullname"));
+        editor.putString("user_provider_name",udata.getString("users_corp"));
+        editor.putLong("user_provider_id",udata.getLong("user_provider_id"));
+        editor.putLong("user_site_id",udata.getLong("user_site_id"));
+        editor.putString("site_name",udata.getString("site_name"));
+        editor.apply();
+    }
+
     public void AuthenticateUser(String username, String password, final IsAllowedUser isAllowed){
         String url = "https://www.vialogika.com.mx/dscic/requesthandler.php?function=au&username="+username+"&password="+password;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(JSONObject response){
                 //We got a response
                 try {
+                    if(response.getBoolean("isAllowed")){
+                        JSONArray ja = response.getJSONArray("userdata");
+                        JSONObject jo = ja.getJSONObject(0);
+                        saveUserSP(jo);
+                    }
                     isAllowed.check(response.getBoolean("isAllowed"));
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -223,23 +269,57 @@ public class MainActivity extends Activity {
             if (netAvailable){
                 //TO DO Delete this variable
                 final String finalImei = imei_number;
+                progress.setText("Checando conexion al servidor...");
                 checkServer(new checkStatusCode() {
                     //This chunk almost a day from my life
                     @Override
                     public Integer ServerStatusCode(Integer statuscode) {
+                        progress.setText("Autenticando dispositivo..");
                         isAllowedDevice(imei_number, new IsAllowedDevice() {
                             @Override
                             public void check(Boolean response) {
                                 if(response){
+                                    progress.setText("Autenticando Usuario..");
                                     AuthenticateUser(uname.getText().toString(), pwd.getText().toString(), new IsAllowedUser() {
                                         @Override
                                         public void check(Boolean repsonse) {
                                             if(repsonse){
-                                                //Once all testings has been checked get user to user workspace
-                                                startActivity(myIntent);
-                                                finish();
+                                                progress.setText("Actualizando Bases de datos");
+                                                //Once all testings has been checked update databases and get user to user workspace
+                                                String usersite = String.valueOf(Databases.siteId(getApplication()));
+                                                String provid = String.valueOf(Databases.providerId(getApplication()));
+                                                String getParams = "&siteid=" + usersite + "&providerid=" + provid;
+                                                Databases db = new Databases();
+                                                db.getDataFromServer(MainActivity.this, "deviceData", null, getParams, new Databases.callbacks() {
+                                                    //Called when we got a server response if we need to do additional computation
+                                                    @Override
+                                                    public void onResponse(JSONObject response) {
+
+                                                    }
+                                                    //Called when database was succesfully updated from server
+                                                    @Override
+                                                    public void onDbUpdateSuccess(){
+                                                        progress.setText("Bases actualizadas");
+                                                        startActivity(myIntent);
+                                                        finish();
+                                                    }
+                                                    //Called on volley response error
+                                                    @Override
+                                                    public void onResponseError(VolleyError error) {
+                                                        if(error instanceof TimeoutError || error instanceof NoConnectionError){
+                                                            new MaterialDialog.Builder(MainActivity.this)
+                                                                    .title("Network error")
+                                                                    .content("Se ha agotado el tiempo de espera de conexion con el servidor,favor de verificar la conexion a internet.")
+                                                                    .positiveText("OK")
+                                                                    .show();
+                                                        }
+
+                                                    }
+                                                });
+
                                             }else{
                                                 MainActivity.this.showMyDialog("Usuario o contraseña incorrectos");
+                                                progress.setText(R.string.novalid_id_text);
                                             }
                                         }
                                     });

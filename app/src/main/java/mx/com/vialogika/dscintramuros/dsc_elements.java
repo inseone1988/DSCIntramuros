@@ -21,6 +21,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import org.json.JSONArray;
 
 import java.io.File;
@@ -49,6 +52,7 @@ public class dsc_elements extends Fragment {
     private RecyclerView mReciclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
     public dsc_elements() {
         // Required empty public constructor
     }
@@ -88,6 +92,19 @@ public class dsc_elements extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
+    /**
+     * Called when the fragment is visible to the user and actively running.
+     * This is generally
+     * tied to {@link Activity#onResume() Activity.onResume} of the containing
+     * Activity's lifecycle.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
     public void getGuardsList(db mCallback) {
         List<Elementos> mylist = Elementos.findWithQuery(Elementos.class,"SELECT * FROM Elementos");
         guardsList = mylist;
@@ -99,8 +116,6 @@ public class dsc_elements extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
-
 
     /**public void setData(){
      * ---Testing  data---
@@ -151,27 +166,29 @@ public class dsc_elements extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ElementViewHolder holder, final int position){
+        public void onBindViewHolder(ElementViewHolder holder,int position){
             final Elementos guard = mDataset.get(position);
+            final int deletePosition = position;
             if(guard != null){
                 Bitmap guardProfilePhoto = profileImage(guard.getPerson_photo_path());
-                holder.element_fullname.setText(guard.getPerson_name() + SPACE + guard.getPerson_fname() + SPACE + guard.getPerson_lname());
+                holder.element_fullname.setText(guard.getGuardFullName());
                 holder.element_apt.setText(guard.getGuard_range());
                 holder.element_action_menu.setImageResource(R.drawable.ic_delete_forever_black_24dp);
                 holder.element_action_menu.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new alerts(getActivity(), R.string.delete_title, R.string.delete_message, new alertCallback() {
-                            @Override
-                            public void okbutton() {
-                                deleteElement(guard.getId(),position);
-                            }
-
-                            @Override
-                            public void cancelbutton() {
-
-                            }
-                        });
+                        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                                .title(R.string.delete_title)
+                                .content(R.string.delete_message)
+                                .positiveText(R.string.ok)
+                                .negativeText(R.string.cancel_text)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        deleteElement(guard.getId(),deletePosition);
+                                    }
+                                })
+                                .show();
                     }
                 });
                 if(guardProfilePhoto != null){
@@ -216,6 +233,7 @@ public class dsc_elements extends Fragment {
             element.delete();
             mDataset.remove(position);
             dsc_elements.this.mAdapter.notifyItemRemoved(position);
+            dsc_elements.this.mAdapter.notifyItemRangeChanged(position,mDataset.size());
         }
 
         public Bitmap profileImage(String profile_image_path){
@@ -231,7 +249,7 @@ public class dsc_elements extends Fragment {
 
         @Override
         public int getItemCount(){
-            return guardsList.size();
+            return mDataset.size();
         }
 
     }

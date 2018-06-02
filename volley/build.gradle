@@ -13,34 +13,38 @@
 // this instead:
 //     include(":volley")
 //     project(':volley').buildFileName = 'rules.gradle'
-
 buildscript {
     repositories {
         jcenter()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
     }
 }
-
 plugins {
     id "net.ltgt.errorprone" version "0.0.13"
 }
-
 apply plugin: 'com.android.library'
-
 repositories {
     jcenter()
 }
-
 group = 'com.android.volley'
 version = '1.1.1-SNAPSHOT'
-
 android {
+    signingConfigs {
+        dsc {
+            keyAlias 'dsckey'
+            keyPassword 'rasj1988'
+            storeFile file('C:/Users/DSC_Innovation/AndroidStudioProjects/DSCIntramuros/Dsc.jks')
+            storePassword 'rasj1988'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion = '27.0.3'
 }
-
 apply from: 'rules.gradle'
 apply from: 'bintray.gradle'
+
+dependencies {
+}

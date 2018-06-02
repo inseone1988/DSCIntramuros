@@ -23,4 +23,11 @@
     <style name="menuStyle" parent="@style/Widget.AppCompat.Light.ActionBar">
         <item name="android:background">@color/dsc_gray</item>
     </style>
+    <style name="dscTextAppearance" parent="TextAppearance.AppCompat.Widget.TextView.SpinnerItem">
+        <item name="android:textColor">@color/dsc_black</item>
+    </style>
+    <style name="DscSpinnerStyle" parent="Base.ThemeOverlay.AppCompat">
+        <item name="android:itemBackground">@color/dsc</item>
+        <item name="android:textAppearance">@style/dscTextAppearance</item>
+    </style>
 </resources>

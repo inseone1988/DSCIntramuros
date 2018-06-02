@@ -33,6 +33,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@+id/person_photo"
                 android:layout_toRightOf="@+id/person_photo"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textSize="20sp" />
 
             <TextView

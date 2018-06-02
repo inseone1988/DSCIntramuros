@@ -1,9 +1,17 @@
 package mx.com.vialogika.dscintramuros;
 
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
+
 import com.orm.SugarRecord;
 import com.orm.dsl.Ignore;
 
-public class Elementos extends SugarRecord<Elementos> {
+public class Elementos extends SugarRecord<Elementos>{
+    //Hashed guard ids mean guards saved to server;
+    @Ignore
+    private String guardFullName;
+
+    private String guardHash;
     private String person_name;
     private String person_fname;
     private String person_lname;
@@ -17,6 +25,15 @@ public Elementos(){
 
 public Elementos(String element_name,String element_fname,String element_lname,String element_position,String element_photo_path){
 this.person_name = element_name;
+this.person_fname = element_fname;
+this.person_lname = element_lname;
+this.guard_range = element_position;
+this.person_photo_path = element_photo_path;
+}
+
+public Elementos(String guard_hash,String element_name,String element_fname,String element_lname,String element_position,@Nullable String element_photo_path){
+    this.guardHash = guard_hash;
+    this.person_name = element_name;
 this.person_fname = element_fname;
 this.person_lname = element_lname;
 this.guard_range = element_position;
@@ -62,5 +79,23 @@ this.person_photo_path = element_photo_path;
 
     public void setPerson_photo_path(String person_photo_path) {
         this.person_photo_path = person_photo_path;
+    }
+
+    public String getGuardHash() {
+        return guardHash;
+    }
+
+    public void setGuardHash(String guardHash) {
+        this.guardHash = guardHash;
+    }
+
+    public String getGuardFullName() {
+        String SPACE = " ";
+        return this.person_name + SPACE + this.person_fname + SPACE + this.person_lname;
+
+    }
+
+    public void setGuardFullName(String guardFullName) {
+        this.guardFullName = guardFullName;
     }
 }

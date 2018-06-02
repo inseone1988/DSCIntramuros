@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_pl"
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <RelativeLayout
+            android:id="@+id/group_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true">
+
+            <TextView
+                android:id="@+id/plantilla_no_text"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:background="@color/dsc_light_gray"
+                android:gravity="center"
+                android:text="@string/plantilla_number"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/plantilla_site_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/plantilla_no_text">
+
+                <TextView
+                    android:id="@+id/plantilla_site_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="0.5"
+                    android:text="@string/site_name" />
+
+                <TextView
+                    android:id="@+id/plantilla_provider_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="@string/provider_name" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/plantilla_counts_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/plantilla_site_info"
+                android:layout_toEndOf="@+id/plantilla_no_text">
+
+                <TextView
+                    android:id="@+id/plantilla_gtotal_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:background="@color/dsc_gray"
+                    android:gravity="center"
+                    android:text="@string/plantilla_total_text"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/plantilla_count_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:background="@color/dsc_gray"
+                    android:gravity="center"
+                    android:text="@string/plantilla_total_count"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/planltilla_counts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/plantilla_counts_title"
+                android:layout_toRightOf="@+id/plantilla_no_text">
+
+                <TextView
+                    android:id="@+id/plantilla_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/plantilla_number"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/plantilla_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/plantilla_number"
+                    android:textSize="30sp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

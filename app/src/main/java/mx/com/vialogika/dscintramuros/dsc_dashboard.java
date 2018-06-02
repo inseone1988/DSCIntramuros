@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -55,31 +56,6 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
     }
 
     @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        new MaterialDialog.Builder(this)
-                .title("Cerrar")
-                .content("Seguro que deseas salir de la app?")
-                .positiveText("Ok")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }
-                })
-                .negativeText("Cancelar")
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        return;
-                    }
-                })
-                .show();
-    }
-
-    @Override
     public void onFragmentInteraction(Uri uri){
 
     }
@@ -101,7 +77,7 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
         return null;
     }
 
-    @Override
+     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         if(position != 3){
@@ -118,9 +94,7 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                Intent intent = new Intent();
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent);
+                                finishAndRemoveTask();
                             }
                         }).show();
             }

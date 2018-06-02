@@ -15,4 +15,6 @@
     <color name="dsc_gray">#e2e2e2</color>
     <color name="primary_device_default_light">#fffcfc</color>
     <color name="fab_button_gray">#ececec</color>
+    <color name="dscSpinnerBackground">#fafafa</color>
+    <color name="dsc_light_gray">#f5f5f5</color>
 </resources>

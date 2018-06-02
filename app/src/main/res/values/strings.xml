@@ -60,6 +60,35 @@
     <string name="delete_message">Estas seguro de borrar este elemento?. Esta accion no puede deshacerse.</string>
     <string name="client_name_text">Nombre/Alias</string>
     <string name="client_name">Ciente</string>
+    <string name="user_info">USUARIO</string>
+    <string name="plantilla_number">999</string>
+    <string name="provider_name">Protectio</string>
+    <string name="site_name">Macrocentro</string>
+    <string name="plantilla_date">00-00-0000 00:00</string>
+    <string name="plantilla_total">50</string>
+    <string name="plantilla_count">30</string>
+    <string name="plantilla_total_text">Total</string>
+    <string name="plantilla_total_count">Reportado</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_plantilla_editor">PlantillaEditor</string>
+    <string name="title_activity_plantillas_editor">PlantillasEditor</string>
+    <string name="macrocentro">Macrocentro</string>
+    <string name="site_name_text">Site name text</string>
+    <string name="save_text">Guardar</string>
+    <string name="add_apostamiento_text">Asignar apostamiento</string>
+    <string name="Ok_text">OK</string>
+    <string name="cancel_text">Cancelar</string>
+    <string name="add_text">+</string>
+    <string name="total_text">Total</string>
+    <string name="count_text">Sin cubrir</string>
+    <string name="zero_text">0</string>
+    <string name="fifty_text">50</string>
+    <string name="eliminar_elemento">Eliminar Elemento</string>
+    <string name="eliminar_elemento_advice"></string>
+    <string name="guardar_text">Guardar Plantilla</string>
+    <string name="guardar_plantilla_text">Enviar plantilla</string>
+    <string name="guardar_advice_text">Deseas enviar la plantilla a Central Seguridad?. Una vez guardado no se podra editar el grupo.</string>
+    <string name="enviar_text">Enviar</string>
+    <string name="novalid_id_text">Credenciales no validas</string>
 </resources>
