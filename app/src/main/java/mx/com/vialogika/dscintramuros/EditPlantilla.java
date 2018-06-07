@@ -220,6 +220,14 @@ import java.util.List;
         return isEmpty;
     }
 
+    public void adviceNoValidElements(){
+        new MaterialDialog.Builder(this)
+                .title(R.string.no_valid_values)
+                .content(R.string.no_valid_elements)
+                .positiveText(R.string.ok)
+                .show();
+    }
+
     public void saveapt(MaterialDialog dialog){
         View v = dialog.getCustomView();
         String grupo = getSpinnerText(v,R.id.plantilla_no);
@@ -227,17 +235,24 @@ import java.util.List;
         String ap_name = getSpinnerText(v,R.id.apostamiento_name);
         String clname = getSpinnerText(v,R.id.cliente_name);
         Long provid = Databases.providerId(this);
-        PlantillaPlace pp = new PlantillaPlace(grupo,Nombre,ap_name,clname);
-        pp.setProvId(String.valueOf(provid));
-        long apid = pp.save();
-        if(apid != 0L){
-            Aps insertedAp = new Aps(apid,Nombre,ap_name,null);
-            mAps.add(insertedAp);
-            mAdapter.notifyDataSetChanged();
-            removeSpinnerItem(dialog,Nombre,"elemento");
-            removeSpinnerItem(dialog,ap_name,"apost");
-            adjustCounter(dialog);
+        if(Nombre.equals("Sin elementos") || clname.equals("No hay clientes") || ap_name.equals("Sin elementos")){
+           dialog.hide();
+            adviceNoValidElements();
+        }else{
+            PlantillaPlace pp = new PlantillaPlace(grupo,Nombre,ap_name,clname);
+            pp.setProvId(String.valueOf(provid));
+            long apid = pp.save();
+            if(apid != 0L){
+                Aps insertedAp = new Aps(apid,Nombre,ap_name,null);
+                mAps.add(insertedAp);
+                mAdapter.notifyDataSetChanged();
+                removeSpinnerItem(dialog,Nombre,"elemento");
+                removeSpinnerItem(dialog,ap_name,"apost");
+                adjustCounter(dialog);
+            }
         }
+
+
     }
 
     public String getSpinnerText(View v,int spResource){

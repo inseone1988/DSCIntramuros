@@ -91,4 +91,6 @@
     <string name="guardar_advice_text">Deseas enviar la plantilla a Central Seguridad?. Una vez guardado no se podra editar el grupo.</string>
     <string name="enviar_text">Enviar</string>
     <string name="novalid_id_text">Credenciales no validas</string>
+    <string name="no_valid_elements">Favor de aseguarase de haber dado de alta apostamientos y elementos validos primero.</string>
+    <string name="no_valid_values">Valores no validos</string>
 </resources>
