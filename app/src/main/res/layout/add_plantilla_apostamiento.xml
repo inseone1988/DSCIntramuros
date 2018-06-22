@@ -38,7 +38,7 @@
             android:layout_weight="0.5"
             android:background="@color/dsc_gray"
             android:gravity="center"
-            android:text="@string/fifty_text"
+            android:text="@string/zero_text"
             android:textSize="30sp" />
 
         <TextView
@@ -56,60 +56,72 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.7"
-            android:gravity="center_vertical">
-
-            <Spinner
-                android:id="@+id/plantilla_no"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"></Spinner>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/new_plantilla"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/groupNo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.3">
-
-            <Button
-                android:id="@+id/add_plantilla_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:gravity="center"
-                android:text="@string/add_text" />
-        </LinearLayout>
+            android:text="@string/testing_string"
+            android:textAlignment="center"
+            android:textSize="25sp" />
     </LinearLayout>
-
-    <Spinner
-        android:id="@+id/guardia_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    </Spinner>
+        <AutoCompleteTextView
+            android:id="@+id/guardname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/dsc_light_gray"
+            android:hint="@string/guard_name"
+            android:textColor="@color/dsc_secondary" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <AutoCompleteTextView
+            android:id="@+id/apostamiento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/element_place">
 
+        </AutoCompleteTextView>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <Spinner
-            android:id="@+id/apostamiento_name"
+            android:id="@+id/incidencia"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5">
+            android:layout_weight="0.5"
+            android:prompt="@string/incidence">
 
         </Spinner>
 
         <Spinner
-            android:id="@+id/cliente_name"
+            android:id="@+id/tipoincidncia"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5">
+            android:layout_weight="0.5"
+            android:prompt="@string/incidence_reason">
 
         </Spinner>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/errortext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="20dp"
+            android:text="@string/exampletext"
+            android:textColor="@color/dsc_secondary"
+            android:textSize="20sp" />
     </LinearLayout>
 </LinearLayout>

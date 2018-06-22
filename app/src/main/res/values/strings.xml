@@ -93,4 +93,8 @@
     <string name="novalid_id_text">Credenciales no validas</string>
     <string name="no_valid_elements">Favor de aseguarase de haber dado de alta apostamientos y elementos validos primero.</string>
     <string name="no_valid_values">Valores no validos</string>
+    <string name="guard_name">Nombre del elemento</string>
+    <string name="element_place">Apostamiento/Filtro/Aduana</string>
+    <string name="incidence">Incidencia</string>
+    <string name="incidence_reason">Razon</string>
 </resources>

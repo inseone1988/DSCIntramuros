@@ -67,13 +67,11 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
 
     @Override
     public List<Elementos> getElemList() {
-        new ElementsList().execute();
         return null;
     }
 
     @Override
     public List<Apostamientos> getApostamientos() {
-        new ElementsList().execute();
         return null;
     }
 
@@ -99,7 +97,6 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
                         }).show();
             }
         }
-
         //restoreActionBar();
     }
 
@@ -133,42 +130,14 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
         switch(sectionid){
             case 1:
                 fragment = new fragment_dsc_plantillas();
-
                 break;
             case 2:
                 fragment = new dsc_elements();
-
                 break;
             case 3:
                 fragment = new dsc_apostamientos();
-
                 break;
         }
         return fragment;
-    }
-
-    private class ElementsList extends AsyncTask<Void,Void,List<Elementos>>{
-
-        protected List<Elementos> doInBackground(Void... aVoid){
-            List<Elementos> mylist = Elementos.findWithQuery(Elementos.class,"SELECT * FROM Elementos");
-            return mylist;
-        }
-
-        protected void onPostExecute(List<Elementos> mList){
-            mElementos = mList;
-        }
-
-    }
-
-    private class apostamientosList extends AsyncTask<Void,Void,List<Apostamientos>>{
-
-        protected List<Apostamientos> doInBackground(Void... aVoid){
-            List<Apostamientos> mylist = Apostamientos.findWithQuery(Apostamientos.class,"SELECT * FROM Apostamientos");
-            return mylist;
-        }
-
-        protected void  onPostExecute(List <Apostamientos> mList){
-            mApostamientos = mList;
-        }
     }
 }
