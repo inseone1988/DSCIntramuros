@@ -1,16 +1,20 @@
 package mx.com.vialogika.dscintramuros;
 
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.internal.MDButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +35,19 @@ public class EditPlaces {
     private Boolean plComplete = false;
     private Boolean hasincidence = false;
     private Boolean hasErrors = false;
+    private MaterialDialog mDialog;
 
 
     public EditPlaces(Context context,MaterialDialogPayload data){
         this.MODE = data.getMODE();
         this.grupo = data.getGrupo();
         getDialogData();
-        setupDialog(context);
+        mDialog = setupDialog(context);
+        //By default disable incidence reason spinner
+        View v = mDialog.getCustomView();
+        disableSpinner(v);
+        setDialogData();
+        setDialogIteractions(v);
     }
 
     private MaterialDialog setupDialog(Context context){
@@ -47,29 +57,12 @@ public class EditPlaces {
                 .positiveText("Agregar")
                 .negativeText("Guardar")
                 .autoDismiss(false)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        //Agregar Apostamiento
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        //Enviar apostamiento
-                    }
-                })
                 .show();
-        //By default disable incidence reason spinner
-        View v = dialog.getCustomView();
-        disableSpinner(v);
-        setDialogData(dialog);
-        setDialogIteractions(v);
         return dialog;
     }
 
-    private void setDialogData(MaterialDialog dialog){
-        View v = dialog.getCustomView();
+    private void setDialogData(){
+        View v = mDialog.getCustomView();
         //TODO:Set Counters
         //Set group Text
         setGrupoText(v);
@@ -112,6 +105,7 @@ public class EditPlaces {
 
     private void disableSpinner(View v){
         Spinner sp = v.findViewById(R.id.tipoincidncia);
+        sp.setSelection(0,true);
                 sp.setEnabled(false);
     }
 
@@ -136,9 +130,14 @@ public class EditPlaces {
         boolean isIncidence = false;
         if(!incidenceField.equals("Tiempo ordinario")){
             isIncidence = true;
+            //TODO:Check explicit incidence check by field avoiding set to false when we have incidence
             hasincidence = true;
         }
         return isIncidence;
+    }
+
+    private boolean getHasIncidence(){
+        return hasincidence;
     }
 
     private boolean isValidAp(String ap){
@@ -149,7 +148,54 @@ public class EditPlaces {
         return isvalid;
     }
 
+    private TextView getErrorTextView(View v){
+        return (TextView) v.findViewById(R.id.errortext);
+    }
+
+    private void setErrorText(View v,String message){
+        final TextView errorField = getErrorTextView(v);
+        errorField.setText(message);
+        new CountDownTimer(3000, 1000){
+            /**
+             * Callback fired on regular interval.
+             *
+             * @param millisUntilFinished The amount of time until finished.
+             */
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            /**
+             * Callback fired when the time is up.
+             */
+            @Override
+            public void onFinish() {
+                errorField.setText("");
+            }
+        }.start();
+    }
+
     private void onElementoSave(){
+        View v = mDialog.getCustomView();
+        String ElementName = getGuardName(v);
+        String ApName = getApName(v);
+        String incidence = getIncidenceType(v);
+        String increason  = getIncidenceReason(v);
+        if(isAvailable(ElementName)){
+            if(isValidAp(ApName)){
+                if(checkIncidence(incidence)){
+                    //Is incidence
+
+                }else{
+
+                }
+            }else{
+                setErrorText(v,"Apostamiento no valido");
+            }
+        }else{
+            setErrorText(v,"Elemento no valido");
+        }
 
     }
 
@@ -189,15 +235,87 @@ public class EditPlaces {
         return  found;
     }
 
-    private void setDialogIteractions(View v){
-
+    private void setMBOnClick(View view){
+        MDButton ok = mDialog.getActionButton(DialogAction.POSITIVE);
+        MDButton guardar = mDialog.getActionButton(DialogAction.NEGATIVE);
+        setOkButtonIOnClick(ok);
+        setGuardarButtonOnClick(guardar);
     }
 
-    private void setGuardOnIncidenceSelect(View v){
+    private void setOkButtonIOnClick(MDButton okbutton){
+        okbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onElementoSave();
+            }
+        });
+    }
+
+    private void setGuardarButtonOnClick(MDButton guardar){
+        guardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private void setDialogIteractions(View v){
+        setGuardOnIncidenceSelect(v);
+        setMBOnClick(v);
+    }
+
+    private void enableIncTypeSp(View v){
+        Spinner sp = v.findViewById(R.id.tipoincidncia);
+        sp.setEnabled(true);
+    }
+
+    private void handleOnIncidenceSelect(View v){
         String inc = getIncidenceType(v);
         if(checkIncidence(inc)){
-            
+            enableIncTypeSp(v);
+            incTypelist.set(0,"Seleccione");
+            increasonAdapter.notifyDataSetChanged();
+        }else{
+            disableSpinner(v);
+            incTypelist.set(0,"N/A");
+            increasonAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void setGuardOnIncidenceSelect(final View v){
+        Spinner sp = v.findViewById(R.id.incidencia);
+        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            /**
+             * <p>Callback method to be invoked when an item in this view has been
+             * selected. This callback is invoked only when the newly selected
+             * position is different from the previously selected position or if
+             * there was no selected item.</p>
+             * <p>
+             * Impelmenters can call getItemAtPosition(position) if they need to access the
+             * data associated with the selected item.
+             *
+             * @param parent   The AdapterView where the selection happened
+             * @param view     The view within the AdapterView that was clicked
+             * @param position The position of the view in the adapter
+             * @param id       The row id of the item that is selected
+             */
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                handleOnIncidenceSelect(v);
+            }
+            /**
+             * Callback method to be invoked when the selection disappears from this
+             * view. The selection can disappear for instance when touch is activated
+             * or when the adapter becomes empty.
+             *
+             * @param parent The AdapterView that now contains no selected item.
+             */
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                parent.setEnabled(false);
+            }
+        });
     }
 
     private String getGuardName(View v){
@@ -222,15 +340,17 @@ public class EditPlaces {
 
     private void setUpIncidences(){
         incList = new ArrayList<>();
-        incList.add("Tiempo Ordinario");
+        incList.add("Tiempo ordinario");
         incList.add("Tiempo extra");
-        incList.add("Vacante");
+        incList.add("Otro");
     }
 
     private void incidencesReasons(){
         incTypelist = new ArrayList<>();
+        incTypelist.add("N/A");
         incTypelist.add("Falta");
         incTypelist.add("Requerimiento del cliente");
+        incTypelist.add("Vacante");
         incTypelist.add("Otro");
     }
 }

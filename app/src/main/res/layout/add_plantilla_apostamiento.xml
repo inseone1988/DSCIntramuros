@@ -73,8 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/dsc_light_gray"
-            android:hint="@string/guard_name"
-            android:textColor="@color/dsc_secondary" />
+            android:hint="@string/guard_name" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -120,7 +119,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="20dp"
-            android:text="@string/exampletext"
             android:textColor="@color/dsc_secondary"
             android:textSize="20sp" />
     </LinearLayout>

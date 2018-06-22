@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -78,13 +79,17 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
      @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        if(position != 3){
+        if(position <= 1){
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, getFragment(position + 1))
                     .commit();
         }else{
-            if(position == 3){
+            if(position == 2||position==3){
+                Toast toast = Toast.makeText(getApplicationContext(),"Coming soon",Toast.LENGTH_SHORT);
+                toast.show();
+            }
+            if(position == 4){
                 new MaterialDialog.Builder(this)
                         .content("Salir de la App")
                         .positiveText("Salir")

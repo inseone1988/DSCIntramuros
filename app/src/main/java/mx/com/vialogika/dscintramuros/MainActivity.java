@@ -56,7 +56,8 @@ interface IsAllowedDevice{
 interface IsAllowedUser{
     void check(Boolean repsonse);
 }
-
+//TODO: implement a method to save group info
+//TODO:In dreamweaver set the modify the user payload
 public class MainActivity extends Activity {
     Integer serverStatus;
     String imei_number;
