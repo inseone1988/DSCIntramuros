@@ -1,6 +1,9 @@
 package mx.com.vialogika.dscintramuros;
 
+import android.support.annotation.Nullable;
+
 import com.orm.SugarRecord;
+
 
 public class Incidences extends SugarRecord {
     private String dateTime;
@@ -13,7 +16,7 @@ public class Incidences extends SugarRecord {
 
     }
 
-    public Incidences(String dateTime, String incidenceName, String incidenceType, String incidenceObs) {
+    public Incidences(String dateTime, String incidenceName, String incidenceType,@Nullable String incidenceObs) {
         this.dateTime = dateTime;
         this.incidenceName = incidenceName;
         this.incidenceType = incidenceType;

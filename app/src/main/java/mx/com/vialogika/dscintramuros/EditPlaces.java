@@ -11,15 +11,23 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.internal.MDButton;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditPlaces {
+interface actions{
+    void onApostamientoSaved(EditPlaces instance);
+    void onIncidenceConfirm(EditPlaces instance);
+    void onSaveToDb(EditPlaces instance);
+}
+public class EditPlaces{
     private int total;
     private int count;
     private String grupo;
@@ -36,11 +44,13 @@ public class EditPlaces {
     private Boolean hasincidence = false;
     private Boolean hasErrors = false;
     private MaterialDialog mDialog;
+    private Aps lastSavedAp;
+    private actions callbacks;
 
-
-    public EditPlaces(Context context,MaterialDialogPayload data){
+    public EditPlaces(Context context,MaterialDialogPayload data,actions mCalbbacks){
         this.MODE = data.getMODE();
         this.grupo = data.getGrupo();
+        this.callbacks = mCalbbacks;
         getDialogData();
         mDialog = setupDialog(context);
         //By default disable incidence reason spinner
@@ -48,6 +58,8 @@ public class EditPlaces {
         disableSpinner(v);
         setDialogData();
         setDialogIteractions(v);
+        monitor();
+        alreadySavedGroupMonitor();
     }
 
     private MaterialDialog setupDialog(Context context){
@@ -62,6 +74,7 @@ public class EditPlaces {
     }
 
     private void setDialogData(){
+
         View v = mDialog.getCustomView();
         //TODO:Set Counters
         //Set group Text
@@ -75,6 +88,14 @@ public class EditPlaces {
     private void setGrupoText(View v){
         TextView grupotext = v.findViewById(R.id.groupNo);
         grupotext.setText(grupo);
+    }
+
+    private void getGuardNames(){
+        if(MODE.equals("new")){
+            elementos = Databases.enames();
+        }else{
+            elementos = Databases.availableElementos(grupo);
+        }
     }
 
     private void setElementsdata(View v){
@@ -111,7 +132,6 @@ public class EditPlaces {
 
     private void getDialogData(){
         //Get counters data
-
         //Get all elements,Get asigned elements,resolve which list to show
         getGuardNames();
         setUpIncidences();
@@ -134,6 +154,34 @@ public class EditPlaces {
             hasincidence = true;
         }
         return isIncidence;
+    }
+
+    private void disableSaveGuardButton(){
+        mDialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
+    }
+
+    private void disableReportButton(){
+        mDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);
+    }
+
+    private void alreadySavedGroupMonitor(){
+        if(!MODE.equals("new")){
+            if(Databases.plantillaIsSaved(grupo)){
+                disableReportButton();
+                disableSaveGuardButton();
+            }
+        }
+    }
+
+    private void noElementsMonitor(){
+        if(elementos.size()==0){
+            mDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);
+        }
+    }
+
+    private void monitor(){
+        noElementsMonitor();
+        //alreadySavedGroupMonitor();
     }
 
     private boolean getHasIncidence(){
@@ -177,18 +225,40 @@ public class EditPlaces {
     }
 
     private void onElementoSave(){
+        long siteid = Databases.siteId(mDialog.getContext());
+        long provid = Databases.providerId(mDialog.getContext());
         View v = mDialog.getCustomView();
         String ElementName = getGuardName(v);
         String ApName = getApName(v);
         String incidence = getIncidenceType(v);
         String increason  = getIncidenceReason(v);
+        Elementos element = Databases.getElemento(ElementName);
         if(isAvailable(ElementName)){
             if(isValidAp(ApName)){
                 if(checkIncidence(incidence)){
-                    //Is incidence
-
+                Incidences inc = new Incidences(Databases.sNow(),incidence,increason,null);
+                PlantillaPlace pl = new PlantillaPlace(grupo,ElementName,ApName);
+                inc.save();
+                pl.setSiteId(siteid);
+                pl.setProvId(String.valueOf(provid));
+                pl.setIcId(String.valueOf(inc.getId()));
+                pl.save();
+                removeElement(ElementName);
+                lastSavedAp = new Aps(pl.getId(),ElementName,ApName,element.getPerson_photo_path());
+                callbacks.onIncidenceConfirm(this);
+                callbacks.onApostamientoSaved(this);
+                clearTextFields();
+                monitor();
                 }else{
-
+                    PlantillaPlace pl = new PlantillaPlace(grupo,ElementName,ApName);
+                    pl.setSiteId(siteid);
+                    pl.setProvId(String.valueOf(provid));
+                    long id = pl.save();
+                    removeElement(ElementName);
+                    lastSavedAp = new Aps(id,ElementName,ApName,element.getPerson_photo_path());
+                    callbacks.onApostamientoSaved(this);
+                    clearTextFields();
+                    monitor();
                 }
             }else{
                 setErrorText(v,"Apostamiento no valido");
@@ -199,15 +269,16 @@ public class EditPlaces {
 
     }
 
-    private void getGuardNames(){
-        if(MODE.equals("new")){
-            elementos = Databases.enames();
-        }else{
-            elementos = Databases.availableElementos(grupo);
-        }
+    public Aps getLastSavedAp() {
+        return lastSavedAp;
     }
 
-    private void removeListItem(List mList,String element){
+    private void removeElement(String element){
+        elementos.remove(element);
+        gAdapter.notifyDataSetChanged();
+    }
+
+    private void removeListItem(List mList, String element){
         for(int i = 0;i < mList.size();i++){
             if(mList.get(i).equals(element)){
                 mList.remove(i);
@@ -252,12 +323,17 @@ public class EditPlaces {
     }
 
     private void setGuardarButtonOnClick(MDButton guardar){
+        final EditPlaces ep = this;
         guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+               callbacks.onSaveToDb(ep);
             }
         });
+    }
+
+    public void hideDialog (){
+        mDialog.hide();
     }
 
     private void setDialogIteractions(View v){
@@ -281,6 +357,23 @@ public class EditPlaces {
             incTypelist.set(0,"N/A");
             increasonAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void clearTextFields(){
+        clearElementName();
+        clearApName();
+    }
+
+    private void clearElementName(){
+        View dView = mDialog.getCustomView();
+        AutoCompleteTextView atv = dView.findViewById(R.id.guardname);
+        atv.setText("");
+    }
+
+    private void clearApName(){
+        View dView = mDialog.getCustomView();
+        AutoCompleteTextView atv = dView.findViewById(R.id.apostamiento);
+        atv.setText("");
     }
 
     private void setGuardOnIncidenceSelect(final View v){
@@ -352,5 +445,9 @@ public class EditPlaces {
         incTypelist.add("Requerimiento del cliente");
         incTypelist.add("Vacante");
         incTypelist.add("Otro");
+    }
+
+    public String getGrupo() {
+        return grupo;
     }
 }

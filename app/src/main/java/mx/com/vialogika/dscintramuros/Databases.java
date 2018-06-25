@@ -146,8 +146,8 @@ public class Databases {
         String from = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(new Date());
         String to = sNow();
         String[] args = new String[]{grupo,from,to};
-        List<Plantillas> pl = Plantillas.find(Plantillas.class,"TURNO = ? AND DATE BETWEEN ? AND ?",args);
-        if(pl.size() > 0){
+        List<Plantillas> pl = Plantillas.find(Plantillas.class,"TURNO = ? AND DATE BETWEEN ? AND ? ",args);
+        if(pl.get(0).getSaved().equals("saved")){
             isSaved = true;
         }
         return isSaved;
@@ -156,6 +156,10 @@ public class Databases {
     public static void deleteElement(long id){
         Elementos el = Elementos.findById(Elementos.class,id);
         el.delete();
+    }
+
+    public static void sendIncidence(){
+
     }
 
     private static void saveApsplaces(JSONObject dataToSave, final Context context, final callbacks callback){
@@ -240,7 +244,7 @@ public class Databases {
         return ids;
     }
 
-    public static void SavePlantillaToServer(String grupo,Context context) throws JSONException{
+    public static void SavePlantillaToServer(String grupo, Context context, final generic callback) throws JSONException{
         String from = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(new Date());
         String to = sNow();
         List<String> toSave = new ArrayList<String>();
@@ -255,6 +259,7 @@ public class Databases {
             @Override
             public void callback() {
                 setPlantillaSaved(mArgs);
+                callback.callback();
             }
         });
     }
@@ -287,6 +292,17 @@ public class Databases {
     public static String sNow(){
         SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");
         return sDate.format(new Date());
+    }
+
+    public static Elementos getElemento(String elementName){
+        Elementos match = null;
+        List<Elementos> elements = Elementos.listAll(Elementos.class);
+        for(int i = 0;i < elements.size();i++){
+            if (elements.get(i).getGuardFullName().contentEquals(elementName)){
+                match = elements.get(i);
+            }
+        }
+        return match;
     }
 
     public void SaveToClientes(JSONObject ClientesData)throws JSONException{

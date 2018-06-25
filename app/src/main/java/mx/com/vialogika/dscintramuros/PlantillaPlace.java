@@ -1,5 +1,7 @@
 package mx.com.vialogika.dscintramuros;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class PlantillaPlace {
@@ -11,19 +13,16 @@ public class PlantillaPlace {
     private String ghash;
     private String gJob;
     private Long siteId;
-    private Long clientid;
     private Long plantId;
     private Long apId;
     private String provId;
     private String grupo;
 
-    public PlantillaPlace(String Grupo,String guardFullName,String Apostamiento,String Cliente){
+    public PlantillaPlace(String Grupo,String guardFullName,String Apostamiento){
         this.guardId = Databases.GID(guardFullName);
         this.date = Databases.sNow();
         this.grupo = Grupo;
-        this.siteId = Databases.siteId(Cliente);
         this.apId = Apostamientos.find(Apostamientos.class,"APOSTAMIENTOALIAS = ?",Apostamiento).get(0).getPlace_id();
-        this.clientid = Databases.getClientId(Cliente);
         setGuardInfo(guardId);
     }
 
@@ -74,5 +73,13 @@ public class PlantillaPlace {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public void setIcId(String icId) {
+        this.icId = icId;
+    }
+
+    public void setSiteId(Long siteId) {
+        this.siteId = siteId;
     }
 }

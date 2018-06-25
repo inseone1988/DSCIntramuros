@@ -1,5 +1,7 @@
  package mx.com.vialogika.dscintramuros;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -44,18 +46,11 @@ import java.util.List;
     private List<String> notAvailableguards;
     private List<Aps> mAps;
     private String groupToEdit = "Grupo 1";
-    private ArrayAdapter<String> pl;
-    private ArrayAdapter<String> mAdapterElementos;
-    private ArrayAdapter<String> mAdapterAps;
-    private ArrayAdapter<String> mAdapterClients;
     private final int plantillaTotal = (int) Databases.PlantillaNoPlaces();
     private String MODE = "new";
     private int mFaltan;
     private boolean plComplete = false;
-    private List<String> plList = new ArrayList<String>();
     private List<String> gNames;
-    private List<String> apnames = Databases.apNames();
-    private List<String> clnames = Databases.clientNames();
 
 
     @Override
@@ -70,7 +65,13 @@ import java.util.List;
         getAsignedAps(groupToEdit, new db() {
             @Override
             public void onDataRetrieved() {
-                mAdapter = new ElementoAdapter(mAps);
+                mAdapter = new ElementoAdapter(mAps, new events() {
+                    @Override
+                    public void onApDeleted(int position) {
+                        mAps.remove(position);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
                 mRecyclerview = rootview.findViewById(R.id.edit_plantilla);
                 mLayoutManager = new LinearLayoutManager(getApplication());
                 mRecyclerview.setLayoutManager(mLayoutManager);
@@ -90,7 +91,6 @@ import java.util.List;
                 }
             }
         }
-         getGuardNames();
          testMessage();
      }
 
@@ -115,23 +115,30 @@ import java.util.List;
                  .show();
      }
 
-     private void getGuardNames(){
-        if(MODE.equals("new")){
-            gNames = Databases.enames();
-        }else{
-            gNames = Databases.availableElementos(groupToEdit);
-        }
-
-
-     }
-
      private void setFab(View view){
         final Context mContext = this;
         FloatingActionButton fab = view.findViewById(R.id.fab_add_ap);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new EditPlaces(mContext,getDialogPayload());
+                    new EditPlaces(mContext, getDialogPayload(), new actions() {
+                        @Override
+                        public void onApostamientoSaved(EditPlaces instance) {
+                            mAps.add(instance.getLastSavedAp());
+                            mAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onIncidenceConfirm(EditPlaces instance) {
+
+                        }
+
+                        @Override
+                        public void onSaveToDb(EditPlaces instance) {
+                            instance.hideDialog();
+                            confirmGuardar(instance.getGrupo());
+                        }
+                    });
                 }
             });
 
@@ -151,7 +158,12 @@ import java.util.List;
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         try{
-                            Databases.SavePlantillaToServer(grupo,getApplicationContext());
+                            Databases.SavePlantillaToServer(grupo, getApplicationContext(), new Databases.generic() {
+                                @Override
+                                public void callback() {
+                                    finish();
+                                }
+                            });
                         }catch(JSONException error){
                             Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
                         }
@@ -174,8 +186,10 @@ import java.util.List;
         String SPACE = " ";
         private List<Aps> mDataset;
         int currPosition;
+        private events callbacks;
 
-        public ElementoAdapter(List<Aps> elemento){
+        public ElementoAdapter(List<Aps> elemento,events mEvents){
+            this.callbacks = mEvents;
             this.mDataset = elemento;
         }
 
@@ -205,8 +219,7 @@ import java.util.List;
 
         private void deleteAp(long id){
             Databases.deleteApFromDb(id);
-            EditPlantilla.this.mAps.remove(currPosition);
-            EditPlantilla.this.mAdapter.notifyDataSetChanged();
+            callbacks.onApDeleted(currPosition);
         }
 
         @NonNull
@@ -254,5 +267,8 @@ import java.util.List;
         public int getItemCount() {
             return mDataset.size();
         }
+    }
+    interface events{
+        void onApDeleted(int position);
     }
 }
