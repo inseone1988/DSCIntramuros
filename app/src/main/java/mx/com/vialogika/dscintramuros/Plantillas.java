@@ -27,14 +27,14 @@ public class Plantillas extends SugarRecord<Plantillas> {
     private String date; //string date format YYYY-MM-DD HH:MM:SS
     private String turno; //Grupo 1, Grupo 2, Grupo 3 etc
     private String saved;
-
+    private String tiempo;
 
 
     public Plantillas(){
 
     }
 
-    public Plantillas(Long plId,String provId,String siteid,String placeid,String guardid,String incid,String cgid,String guardjob,String date,String turno){
+    public Plantillas(Long plId,String provId,String siteid,String placeid,String guardid,String incid,String cgid,String guardjob,String date,String turno,String tiempoType){
         this.plantillaid = plId;
         this.provider_id = provId;
         this.site_id = siteid;
@@ -45,6 +45,7 @@ public class Plantillas extends SugarRecord<Plantillas> {
         this.guard_job = guardjob;
         this.date = date;
         this.turno = turno;
+        this.tiempo = tiempoType;
     }
 
     public String getProvider_id() {
@@ -167,5 +168,13 @@ public class Plantillas extends SugarRecord<Plantillas> {
 
     public void setSaved(String saved) {
         this.saved = saved;
+    }
+
+    public String getTiempo() {
+        return tiempo;
+    }
+
+    public void setTiempo(String tiempo) {
+        this.tiempo = tiempo;
     }
 }

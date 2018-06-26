@@ -4,8 +4,11 @@ import android.support.annotation.Nullable;
 
 import com.orm.SugarRecord;
 
+import java.util.UUID;
+
 
 public class Incidences extends SugarRecord {
+    private String MUID = UUID.randomUUID().toString();
     private String dateTime;
     private String incidenceName;
     private String incidenceType;
@@ -53,5 +56,9 @@ public class Incidences extends SugarRecord {
 
     public void setIncidenceObs(String incidenceObs) {
         this.incidenceObs = incidenceObs;
+    }
+
+    public String getMUID() {
+        return MUID;
     }
 }

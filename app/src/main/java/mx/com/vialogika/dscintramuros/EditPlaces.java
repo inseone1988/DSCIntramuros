@@ -237,11 +237,11 @@ public class EditPlaces{
             if(isValidAp(ApName)){
                 if(checkIncidence(incidence)){
                 Incidences inc = new Incidences(Databases.sNow(),incidence,increason,null);
-                PlantillaPlace pl = new PlantillaPlace(grupo,ElementName,ApName);
+                PlantillaPlace pl = new PlantillaPlace(grupo,ElementName,ApName,incidence);
                 inc.save();
                 pl.setSiteId(siteid);
                 pl.setProvId(String.valueOf(provid));
-                pl.setIcId(String.valueOf(inc.getId()));
+                pl.setIcId(inc.getMUID());
                 pl.save();
                 removeElement(ElementName);
                 lastSavedAp = new Aps(pl.getId(),ElementName,ApName,element.getPerson_photo_path());
@@ -250,7 +250,7 @@ public class EditPlaces{
                 clearTextFields();
                 monitor();
                 }else{
-                    PlantillaPlace pl = new PlantillaPlace(grupo,ElementName,ApName);
+                    PlantillaPlace pl = new PlantillaPlace(grupo,ElementName,ApName,incidence);
                     pl.setSiteId(siteid);
                     pl.setProvId(String.valueOf(provid));
                     long id = pl.save();

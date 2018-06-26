@@ -249,12 +249,15 @@ public class Databases {
         String to = sNow();
         List<String> toSave = new ArrayList<String>();
         String[] args = new String[]{grupo,from,to};
+        String[] incArgs = new String[]{from,to};
         List<Plantillas> pl = Plantillas.find(Plantillas.class,"TURNO = ? AND DATE BETWEEN ? AND ?",args);
+        List<Incidences> inc = Incidences.find(Incidences.class,"DATE_TIME BETWEEN ? AND ?",incArgs);
         final String[] mArgs = savedIds(pl);
         JSONObject obj = new JSONObject();
         Gson gson = new Gson();
         obj.put("function","saveplantilla");
         obj.put("data",gson.toJson(pl));
+        obj.put("incidences",gson.toJson(inc));
         sendPlantilla(obj, context, new generic() {
             @Override
             public void callback() {
