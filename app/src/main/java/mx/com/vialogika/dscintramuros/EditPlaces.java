@@ -175,7 +175,7 @@ public class EditPlaces{
 
     private void noElementsMonitor(){
         if(elementos.size()==0){
-            mDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);
+            mDialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
         }
     }
 
