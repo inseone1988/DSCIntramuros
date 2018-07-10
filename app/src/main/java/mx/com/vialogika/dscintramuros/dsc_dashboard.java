@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -79,13 +80,13 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
      @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        if(position <= 1){
+        if(position <= 2){
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, getFragment(position + 1))
                     .commit();
         }else{
-            if(position == 2||position==3){
+            if(position==3){
                 Toast toast = Toast.makeText(getApplicationContext(),"Coming soon",Toast.LENGTH_SHORT);
                 toast.show();
             }
@@ -140,8 +141,10 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
                 fragment = new dsc_elements();
                 break;
             case 3:
-                fragment = new dsc_apostamientos();
+                fragment = new PIEFragment();
                 break;
+            case 4:
+                fragment = null; //TODO:Edit restricted acces layout and class
         }
         return fragment;
     }
