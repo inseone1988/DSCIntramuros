@@ -69,7 +69,6 @@ public class editElement extends Activity {
                         Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                         ImageView myImage = (ImageView) findViewById(R.id.picture);
                         myImage.setImageBitmap(myBitmap);
-
                     }
                 }
             }

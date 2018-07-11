@@ -56,7 +56,6 @@ public class camera_preview extends Activity {
                 }else{
                     askForCameraPermissions();
                 }
-
             }
         });
         cameraView = findViewById(R.id.cameraprev);
@@ -100,8 +99,6 @@ public class camera_preview extends Activity {
             fos.write(image);
             fos.flush();
             fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -42,6 +42,7 @@ public class Databases {
     private int OK = 200;
     private int NOTFOUND = 404;
     private JsonRequest  jsonR;
+
     public Databases(){
     }
 
@@ -158,8 +159,37 @@ public class Databases {
         el.delete();
     }
 
-    public static void sendIncidence(){
-
+    public static void sendIncidence(final Context context,long incid, final callbacks callback){
+        String url = "https://www.vialogika.com.mx/dscic/raw.php";
+        RequestQueue rq = Volley.newRequestQueue(context);
+        JSONObject object = new JSONObject();
+        try{
+            SiteIncidences incidence = SiteIncidences.findById(SiteIncidences.class,incid);
+            Gson gson = new Gson();
+            String payload = gson.toJson(incidence);
+            object.put("function","savesiteIncidence");
+            object.put("data",payload);
+            JsonRequest request = new JsonObjectRequest(JsonRequest.Method.POST, url, object, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    callback.onResponse(response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    if(error instanceof TimeoutError || error instanceof NoConnectionError){
+                        new MaterialDialog.Builder(context)
+                                .title("Network error")
+                                .content("Se ha agotado el tiempo de espera de conexion con el servidor,favor de verificar la conexion a internet.")
+                                .positiveText("OK")
+                                .show();
+                    }
+                }
+            });
+            rq.add(request);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
     }
 
     private static void saveApsplaces(JSONObject dataToSave, final Context context, final callbacks callback){

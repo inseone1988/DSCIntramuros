@@ -3,12 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
     android:orientation="vertical"
     tools:context=".PIEFragment">
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -54,6 +55,13 @@
                     android:text="@string/pie_cap_label" />
             </LinearLayout>
 
+            <Spinner
+                android:id="@+id/event_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:prompt="@string/event_type_prompt"></Spinner>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -75,6 +83,7 @@
                     android:textSize="18sp" />
 
                 <EditText
+                    android:id="@+id/event_timex"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.4"
@@ -95,58 +104,53 @@
                     android:text="@string/pie_highlight_title"
                     android:textSize="24sp" />
 
-                <LinearLayout
+                <RadioGroup
+                    android:id="@+id/event_highlight"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
+                    android:checkedButton="@+id/pie_sem_null"
                     android:orientation="horizontal">
 
-                    <RadioGroup
-                        android:layout_width="match_parent"
+                    <RadioButton
+                        android:id="@+id/pie_sem_null"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checkedButton="@+id/pie_sem_null"
-                        android:orientation="horizontal">
+                        android:layout_weight="0.25"
+                        android:background="@color/dsc_gray"
+                        android:text="@string/pie_null_label"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
 
-                        <RadioButton
-                            android:id="@+id/pie_sem_null"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.25"
-                            android:background="@color/dsc_gray"
-                            android:text="@string/pie_null_label"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold" />
+                    <RadioButton
+                        android:id="@+id/pie_sem_green"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:background="@android:color/holo_green_light"
+                        android:text="@string/pie_green_label"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
 
-                        <RadioButton
-                            android:id="@+id/pie_sem_green"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.25"
-                            android:background="@android:color/holo_green_light"
-                            android:text="@string/pie_green_label"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold" />
+                    <RadioButton
+                        android:id="@+id/pie_sem_yellow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:background="@color/dsc"
+                        android:text="@string/pie_yellow_label"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
 
-                        <RadioButton
-                            android:id="@+id/pie_sem_yellow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.25"
-                            android:background="@color/dsc"
-                            android:text="@string/pie_yellow_label"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold" />
-
-                        <RadioButton
-                            android:id="@+id/pie_sem_red"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.25"
-                            android:background="@color/dsc_secondary"
-                            android:text="@string/pie_red_label"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold" />
-                    </RadioGroup>
-                </LinearLayout>
+                    <RadioButton
+                        android:id="@+id/pie_sem_red"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:background="@color/dsc_secondary"
+                        android:text="@string/pie_red_label"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
+                </RadioGroup>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -154,14 +158,16 @@
                     android:orientation="horizontal"
                     android:paddingBottom="5dp">
 
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/responsible"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.5"
                         android:gravity="center"
                         android:text="@string/pie_pers_identified" />
 
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/evidence_taked"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.5"
@@ -183,52 +189,65 @@
                         android:paddingBottom="5dp"
                         android:paddingTop="5dp"
                         android:text="@string/pie_descrip_table_label"
-                        android:textSize="20dp" />
+                        android:textSize="20sp" />
 
                     <EditText
+                        android:id="@+id/event_what"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:layout_marginStart="10dp"
-                        android:hint="@string/pie_what_hint" />
+                        android:hint="@string/pie_what_hint"
+                        android:inputType="textCapSentences" />
 
                     <EditText
+                        android:id="@+id/event_how"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:layout_marginStart="10dp"
-                        android:hint="@string/pie_how_hint" />
+                        android:hint="@string/pie_how_hint"
+                        android:inputType="textCapSentences" />
 
                     <EditText
+                        android:id="@+id/event_when"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:layout_marginStart="10dp"
-                        android:hint="@string/pie_when_hint" />
+                        android:hint="@string/pie_when_hint"
+                        android:inputType="textCapSentences" />
 
                     <EditText
+                        android:id="@+id/event_where"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:layout_marginStart="10dp"
-                        android:hint="@string/pie_where_hint" />
+                        android:hint="@string/pie_where_hint"
+                        android:inputType="textCapSentences" />
 
                     <EditText
+                        android:id="@+id/event_facts"
                         android:layout_width="match_parent"
                         android:layout_height="150dp"
                         android:gravity="top"
                         android:hint="@string/pie_facts_hint"
                         android:inputType="textMultiLine"
-                        android:paddingLeft="5dp" />
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp" />
 
                 </LinearLayout>
 
                 <LinearLayout
+                    style="?android:attr/buttonBarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center">
 
                     <Button
+                        android:id="@+id/take_evidence"
+                        style="?android:attr/buttonBarStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
@@ -236,11 +255,32 @@
 
                     <Button
                         android:id="@+id/sign_capture"
+                        style="?android:attr/buttonBarStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:text="@string/signatures_label" />
                 </LinearLayout>
+
+                <Button
+                    android:id="@+id/save_and_send"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/guardar_incidencia_label" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:text="@string/privacy_label" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:gravity="center"
+                    android:text="@string/dsc_copy" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

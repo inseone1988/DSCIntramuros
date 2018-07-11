@@ -99,7 +99,7 @@
     <string name="incidence_reason">Razon</string>
     <string name="pie_title">Parte Informativo Electronico</string>
     <string name="pie_datetime_label">Fecha</string>
-    <string name="pie_cap_label">Capture los datos que se piden a continuacion: \n *Requerido</string>
+    <string name="pie_cap_label">Capture los datos que se piden a continuacion: \n *Todos los campos son requeridos</string>
     <string name="pie_highlight_title">Semaforo de seguridad</string>
     <string name="pie_null_label">Nulo</string>
     <string name="pie_green_label">Verde</string>
@@ -119,4 +119,11 @@
     <string name="signatures_title">Capture nombre y firma</string>
     <string name="signatures_name_hint">Nombre completo</string>
     <string name="signature_capture_title">Captura de firma</string>
+    <string name="signature_neutral">Cerrar</string>
+    <string name="signature_positive">Guardar</string>
+    <string name="guardar_incidencia_label">Guardar y enviar</string>
+    <string name="privacy_label">Aviso de privacidad</string>
+    <string name="dsc_copy">©DHL 2018</string>
+    <string name="event_type_prompt">Tipo de evento</string>
+    <string name="media_output_error_text">Ha ocurrido un error al intentar crear el archivo, asegurese de que la tarjeta sd este insertada y la aplicacion tenga los permisos necesarios e intente de nuevo.</string>
 </resources>
