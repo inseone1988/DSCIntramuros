@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pie"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -60,7 +61,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:prompt="@string/event_type_prompt"></Spinner>
+                android:prompt="@string/event_type_prompt"
+                android:textAlignment="center"></Spinner>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -236,6 +238,14 @@
                         android:inputType="textMultiLine"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp" />
+
+                    <EditText
+                        android:id="@+id/event_user"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:hint="@string/event_user_report"
+                        android:inputType="textCapWords" />
 
                 </LinearLayout>
 

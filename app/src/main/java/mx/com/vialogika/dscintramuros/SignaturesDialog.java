@@ -21,11 +21,12 @@ import java.util.Date;
 public class SignaturesDialog {
 
     private String pName;
+    private String pRole;
     private String currentSignatureImagePath;
 
     private InkView signView;
     private MaterialDialog dialog;
-    private EditText personName;
+    private EditText personName,personRole;
     private onSignatureSaveCallback callback;
 
     public SignaturesDialog(Context context,onSignatureSaveCallback mCallback){
@@ -58,16 +59,18 @@ public class SignaturesDialog {
         View v = dialog.getCustomView();
         signView = v.findViewById(R.id.signature);
         personName = v.findViewById(R.id.person_name);
+        personRole = v.findViewById(R.id.person_role);
     }
 
     private void getName(){
         pName = personName.getText().toString();
+        pRole = personRole.getText().toString();
     }
 
     private void saveSignature(){
         Bitmap signature = signView.getBitmap();
         storeImage(signature);
-        callback.onSignatureSave(currentSignatureImagePath,pName);
+        callback.onSignatureSave(currentSignatureImagePath,pName,pRole);
     }
 
     private void mediaFileErrorDialog(){
@@ -120,7 +123,7 @@ public class SignaturesDialog {
     }
 
     interface onSignatureSaveCallback{
-        void onSignatureSave(String signatureImagePath,String name);
+        void onSignatureSave(String signatureImagePath,String name,String role);
     }
 
 }

@@ -18,12 +18,17 @@ public class SiteIncidences extends SugarRecord {
     private String event_files;
     private String signature_names;
     private String signatures;
+    private String signature_roles;
     private long remoteId;
+    private String event_user;
+    private String event_user_site;
+
     public SiteIncidences(){
 
     }
 
-    public SiteIncidences(String event_date, String event_time, String event_name, String event_risk_level, String event_responsable, String event_evidence, String event_what, String event_how, String event_when, String event_where, String event_facts, String event_files,String signature_names,String signatures) {
+    public SiteIncidences(String eventUser,String event_date, String event_time, String event_name, String event_risk_level, String event_responsable, String event_evidence, String event_what, String event_how, String event_when, String event_where, String event_facts, String event_files,String signature_names,String signatureRoles,String signatures) {
+        this.event_user = eventUser;
         this.capture_date_time = Databases.sNow();
         this.event_date = event_date;
         this.event_time = event_time;
@@ -39,6 +44,7 @@ public class SiteIncidences extends SugarRecord {
         this.event_files = event_files;
         this.signatures = signatures;
         this.signature_names = signature_names;
+        this.signature_roles = signatureRoles;
     }
 
     public String getCapture_date_time() {
@@ -167,5 +173,29 @@ public class SiteIncidences extends SugarRecord {
 
     public void setRemoteId(long remoteId) {
         this.remoteId = remoteId;
+    }
+
+    public String getEvent_user() {
+        return event_user;
+    }
+
+    public void setEvent_user(String event_user) {
+        this.event_user = event_user;
+    }
+
+    public String getEvent_user_site() {
+        return event_user_site;
+    }
+
+    public void setEvent_user_site(String event_user_site) {
+        this.event_user_site = event_user_site;
+    }
+
+    public String getSignature_roles() {
+        return signature_roles;
+    }
+
+    public void setSignature_roles(String signature_roles) {
+        this.signature_roles = signature_roles;
     }
 }

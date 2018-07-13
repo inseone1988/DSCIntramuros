@@ -16,4 +16,12 @@
         android:gravity="center"
         android:hint="@string/signatures_name_hint"
         android:inputType="text" />
+
+    <EditText
+        android:id="@+id/person_role"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="@string/signature_person_role"
+        android:inputType="textCapCharacters" />
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,19 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextClock;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
+import net.gotev.uploadservice.UploadStatusDelegate;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,6 +75,8 @@ public class PIEFragment extends Fragment {
     private String images = "";
     private String signatureNames = "";
     private String signatures = "";
+    private String signaturePersonRoles = "";
+    private String redactor;
 
     private List<String> incidenceNames;
     private String[] incNames = new String[]{"Malas practicas","Condicion insegura","Intento/Sustraccion de producto","Consumo de producto","Acto inseguro","Daño a instalaciones","Riña","Intento de intrusion","Colision de Vehiculos","Lesiones","Ingreso con objetos prohibidos","Otro incidente"};
@@ -76,7 +86,7 @@ public class PIEFragment extends Fragment {
     private RadioGroup highlights;
     private RadioButton highlightSelected;
     private CheckBox responsible,evidence;
-    private EditText eventHour,mWhat,mHow,mWhen,mWhere,mFacts;
+    private EditText eventHour,mWhat,mHow,mWhen,mWhere,mFacts,mRedactor;
     private Button firmas,takeEvidence,save;
     private TextClock eDate;
 
@@ -149,9 +159,28 @@ public class PIEFragment extends Fragment {
         mWhen = v.findViewById(R.id.event_when);
         mWhere = v.findViewById(R.id.event_where);
         mFacts = v.findViewById(R.id.event_facts);
+        mRedactor = v.findViewById(R.id.event_user);
         takeEvidence = v.findViewById(R.id.take_evidence);
         firmas = v.findViewById(R.id.sign_capture);
         save = v.findViewById(R.id.save_and_send);
+    }
+
+    private void clearFields(){
+        eventHour.setText("");
+        highlights.check(R.id.pie_sem_null);
+        responsible.setChecked(false);
+        evidence.setChecked(false);
+        mWhat.setText("");
+        mHow.setText("");
+        mWhen.setText("");
+        mWhere.setText("");
+        mFacts.setText("");
+        mRedactor.setText("");
+        images = "";
+        signaturePersonRoles = "";
+        signatures = "";
+        signatureNames = "";
+        eventHour.requestFocus();
     }
 
     private void setButtonsOnClick(){
@@ -164,7 +193,13 @@ public class PIEFragment extends Fragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveIncidence();
+                confirmPlantillaSend(new OnIncidenceConfirm() {
+                    @Override
+                    public void send() {
+                        saveIncidence();
+                    }
+                });
+
             }
         });
         firmas.setOnClickListener(new View.OnClickListener() {
@@ -172,21 +207,33 @@ public class PIEFragment extends Fragment {
             public void onClick(View v) {
                 new SignaturesDialog(getActivity(), new SignaturesDialog.onSignatureSaveCallback() {
                     @Override
-                    public void onSignatureSave(String signatureImagePath, String name) {
-                        addSiganturesToCollection(signatureImagePath,name);
+                    public void onSignatureSave(String signatureImagePath, String name,String role) {
+                        addSiganturesToCollection(signatureImagePath,name,role);
                     }
                 });
+            }
+        });
+        highlights.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                highlightSelected = group.findViewById(checkedId);
             }
         });
     }
 
     private void saveIncidence(){
+        //first upload evidences then data
         getFormValues();
-        SiteIncidences inc = new SiteIncidences(eventDate,eventTime,eventType,eventHighlight,String.valueOf(suspectIdentified),String.valueOf(evidenceCollected),what,how,when,where,facts,images,signatureNames,signatures);
+        SiteIncidences inc = new SiteIncidences(redactor,eventDate,eventTime,eventType,eventHighlight,String.valueOf(suspectIdentified),String.valueOf(evidenceCollected),what,how,when,where,facts,images,signatureNames,signaturePersonRoles,signatures);
+        inc.setEvent_user_site(String.valueOf(Databases.siteId(getActivity())));
         inc.save();
         long sId = inc.getId();
         if(sId > 0){
-
+            if(signatures.equals("") && images.equals("")){
+                uploadIncidence(sId);
+            }else{
+                uploadMultipart(sId);
+            }
         }
     }
 
@@ -195,10 +242,70 @@ public class PIEFragment extends Fragment {
             @Override
             public void onResponse(JSONObject response) {
                 try{
-                    long rIId = response.getLong("incidence_id");
-                    //Update incidence and set flag that incidence has been uploaded
-                    SiteIncidences incidence = SiteIncidences.findById(SiteIncidences.class,incid);
-                    incidence.setRemoteId(rIId);
+                    if(response.getBoolean("success")){
+                        long rIId = response.getLong("id");
+                        //Update incidence and set flag that incidence has been uploaded
+                        SiteIncidences incidence = SiteIncidences.findById(SiteIncidences.class,incid);
+                        incidence.setRemoteId(rIId);
+                        incidence.save();
+                        Toast.makeText(getActivity(),"Incidencia enviada correctamente.",Toast.LENGTH_SHORT).show();
+                        clearFields();
+                    }else{
+                        String error = response.getString("error");
+                        new MaterialDialog.Builder(getActivity())
+                                .title("Network error")
+                                .content(error)
+                                .positiveText("Ok")
+                                .show();
+                    }
+                }catch(JSONException e ){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onResponseError(VolleyError error) {
+
+            }
+
+            @Override
+            public void onDbUpdateSuccess() {
+
+            }
+        });
+    }
+
+    private void confirmPlantillaSend(final OnIncidenceConfirm callback){
+        new MaterialDialog.Builder(getActivity())
+                .title("Enviar Incidencia")
+                .content("Enviar evidencia?. Una vez enviada ya no es posible editar los datos")
+                .positiveText("Ok")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        callback.send();
+                    }
+                })
+                .negativeText("Cancelar")
+                .show();
+    }
+
+    private void uploadIncidence(final long incid, final JSONObject evidencesSavedResponse) throws JSONException{
+        long rIId = evidencesSavedResponse.getLong("id");
+        //Update incidence and set flag that incidence has been uploaded
+        SiteIncidences incidence = SiteIncidences.findById(SiteIncidences.class,incid);
+        incidence.setRemoteId(rIId);
+        incidence.save();
+        Databases.sendIncidence(getActivity(), incid, new Databases.callbacks() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try{
+                    if(response.getBoolean("success")){
+                        Toast.makeText(getActivity(),"Incidencia enviada correctamente.",Toast.LENGTH_SHORT).show();
+                        clearFields();
+                        finishFragment();
+                    }
+
                 }catch(JSONException e ){
                     e.printStackTrace();
                 }
@@ -217,13 +324,23 @@ public class PIEFragment extends Fragment {
         });
     }
 
+
+    private void finishFragment(){
+        PIEFragment pie = new PIEFragment();
+        getActivity().getFragmentManager().beginTransaction()
+                .replace(R.id.pie,pie,"NEW_PIE")
+                .addToBackStack(null)
+                .commit();
+    }
+
     private void checkForPendingReports(){
 
     }
 
-    private void addSiganturesToCollection(String signaturepath,String name){
+    private void addSiganturesToCollection(String signaturepath,String name,String role){
         signatureNames += name + ",";
         signatures += signaturepath + ",";
+        signaturePersonRoles += role +",";
     }
 
     private void captureEvidences(){
@@ -271,9 +388,10 @@ public class PIEFragment extends Fragment {
         when = mWhen.getText().toString();
         where = mWhere.getText().toString();
         facts = mFacts.getText().toString();
+        redactor = mRedactor.getText().toString();
     }
 
-    private void uploadMultipart(){
+    private void uploadMultipart(final long incId){
         //First check for empty signatures or evidences
         String url = "https://www.vialogika.com.mx/dscic/requesthandler.php";
         try{
@@ -291,13 +409,50 @@ public class PIEFragment extends Fragment {
                     .setNotificationConfig(new UploadNotificationConfig())
                     .setMaxRetries(3)
                     .setAutoDeleteFilesAfterSuccessfulUpload(true)
+                    .setDelegate(new UploadStatusDelegate() {
+                        @Override
+                        public void onProgress(Context context, UploadInfo uploadInfo) {
+
+                        }
+
+                        @Override
+                        public void onError(Context context, UploadInfo uploadInfo, ServerResponse serverResponse, Exception exception) {
+
+                        }
+
+                        @Override
+                        public void onCompleted(Context context, UploadInfo uploadInfo, ServerResponse serverResponse) {
+                            try{
+                                JSONObject response = new JSONObject(serverResponse.getBodyAsString());
+                                if(response.getBoolean("success")){
+                                    uploadIncidence(incId,response);
+                                }else{
+                                    requestErrorDialog(response.getString("error"));
+                                }
+
+                            }catch(JSONException e ){
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(Context context, UploadInfo uploadInfo) {
+
+                        }
+                    })
                     .startUpload();
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-
+    private void requestErrorDialog(String error){
+        new MaterialDialog.Builder(getActivity())
+                .title("Error")
+                .content(error)
+                .positiveText("OK")
+                .show();
+    }
 
     private boolean validateEditTexts(int editText, String value){
         boolean isValid = false;
@@ -346,5 +501,9 @@ public class PIEFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    interface OnIncidenceConfirm{
+        void send();
     }
 }

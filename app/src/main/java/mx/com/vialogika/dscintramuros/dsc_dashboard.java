@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import net.gotev.uploadservice.UploadService;
+
 import java.util.List;
 
 
@@ -24,7 +26,7 @@ interface fab{
     void setFabClickListener();
 }
 
-public class dsc_dashboard extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks, fragment_dsc_plantillas.OnFragmentInteractionListener,dsc_elements.OnFragmentInteractionListener,dsc_apostamientos.OnFragmentInteractionListener {
+public class dsc_dashboard extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks, fragment_dsc_plantillas.OnFragmentInteractionListener,dsc_elements.OnFragmentInteractionListener,dsc_apostamientos.OnFragmentInteractionListener,PIEFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -37,9 +39,11 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
     private CharSequence mTitle;
     private List<Elementos> mElementos;
     private List<Apostamientos> mApostamientos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
         ActionBar actionbar =getActionBar();
         setContentView(R.layout.activity_dsc_dashboard);
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -80,16 +84,12 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
      @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        if(position <= 2){
+        if(position <= 3){
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, getFragment(position + 1))
                     .commit();
         }else{
-            if(position==3){
-                Toast toast = Toast.makeText(getApplicationContext(),"Coming soon",Toast.LENGTH_SHORT);
-                toast.show();
-            }
             if(position == 4){
                 new MaterialDialog.Builder(this)
                         .content("Salir de la App")
@@ -144,7 +144,7 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
                 fragment = new PIEFragment();
                 break;
             case 4:
-                fragment = null; //TODO:Edit restricted acces layout and class
+                fragment = new restricted_consult(); //TODO:Edit restricted acces layout and class
         }
         return fragment;
     }

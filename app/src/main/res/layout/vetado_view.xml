@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vetado_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:layout_marginTop="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/person_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+
+        <TextView
+            android:id="@+id/person_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/person_image"
+            android:gravity="center"
+            android:text="@string/exampletext"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/person_provider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/person_name"
+            android:layout_toRightOf="@+id/person_image"
+            android:text="@string/exampletext"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tipo_veto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/person_provider"
+            android:layout_toRightOf="@+id/person_image"
+            android:text="@string/exampletext"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

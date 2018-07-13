@@ -39,19 +39,20 @@ import java.util.ArrayList;
 import java.util.List;
 
  public class EditPlantilla extends AppCompatActivity {
-    private String mGroup;
-    private RecyclerView mRecyclerview;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private List<String> notAvailableguards;
-    private List<Aps> mAps;
-    private String groupToEdit = "Grupo 1";
-    private final int plantillaTotal = (int) Databases.PlantillaNoPlaces();
-    private String MODE = "new";
-    private int mFaltan;
-    private boolean plComplete = false;
-    private List<String> gNames;
+     private String mGroup;
+     private String MODE = "new";
+     private String groupToEdit = "Grupo 1";
+     private List<String> gNames;
+     private List<String> notAvailableguards;
+     private List<Aps> mAps;
+     private final int plantillaTotal = (int) Databases.PlantillaNoPlaces();
+     private int mFaltan;
+     private boolean plComplete = false;
 
+
+     private RecyclerView mRecyclerview;
+     private RecyclerView.Adapter mAdapter;
+     private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

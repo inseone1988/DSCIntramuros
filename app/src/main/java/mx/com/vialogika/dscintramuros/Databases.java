@@ -167,7 +167,7 @@ public class Databases {
             SiteIncidences incidence = SiteIncidences.findById(SiteIncidences.class,incid);
             Gson gson = new Gson();
             String payload = gson.toJson(incidence);
-            object.put("function","savesiteIncidence");
+            object.put("function","saveSiteIncidence");
             object.put("data",payload);
             JsonRequest request = new JsonObjectRequest(JsonRequest.Method.POST, url, object, new Response.Listener<JSONObject>() {
                 @Override

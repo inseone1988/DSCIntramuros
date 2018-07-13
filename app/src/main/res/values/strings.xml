@@ -125,5 +125,10 @@
     <string name="privacy_label">Aviso de privacidad</string>
     <string name="dsc_copy">©DHL 2018</string>
     <string name="event_type_prompt">Tipo de evento</string>
+    <string name="event_user_report">Nombre completo de quien reporta</string>
+    <string name="signature_person_role">Rol/Puesto/Cargo</string>
+    <string name="by_name">Nombre</string>
+    <string name="by_provider">Proveedor</string>
+    <string name="vetado_consult_title">Consulta de personal con accesso restringido</string>
     <string name="media_output_error_text">Ha ocurrido un error al intentar crear el archivo, asegurese de que la tarjeta sd este insertada y la aplicacion tenga los permisos necesarios e intente de nuevo.</string>
 </resources>
