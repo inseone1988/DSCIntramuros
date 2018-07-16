@@ -1,6 +1,7 @@
 package mx.com.vialogika.dscintramuros;
 
 
+import android.content.res.Resources;
 import android.databinding.ObservableArrayList;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -18,6 +19,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.databinding.ObservableList;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 
@@ -129,22 +131,26 @@ public class restricted_consult extends Fragment {
     }
 
     private void setAndMapResponse(JSONObject response){
-        try{
-            JSONArray payload = response.getJSONArray("payload");
-            for(int i = 0;i < payload.length();i++){
-                response = payload.getJSONObject(i);
-                Vetado vt = new Vetado(response.getInt("idpersons"),response.getString("due_date"),response.getString("person_fullname"),response.getString("provider_alias"),response.getString("restriction_obs"),response.getString("restriction_type"));
-                vetados.add(vt);
-                mAdapter.notifyDataSetChanged();
-                if(vetados.size() != 0){
-                    ll.setVisibility(View.GONE);
-                    mReciclerView.setVisibility(View.VISIBLE);
-                }else{
-                    ll.setVisibility(View.VISIBLE);
-                    mReciclerView.setVisibility(View.GONE);
-                }
-            }
 
+        try{
+            if(response.getBoolean("success")){
+                JSONArray payload = response.getJSONArray("payload");
+                for(int i = 0;i < payload.length();i++){
+                    response = payload.getJSONObject(i);
+                    Vetado vt = new Vetado(response.getInt("idpersons"),response.getString("due_date"),response.getString("person_fullname"),response.getString("provider_alias"),response.getString("restriction_obs"),response.getString("restriction_type"));
+                    vetados.add(vt);
+                    mAdapter.notifyDataSetChanged();
+                    if(vetados.size() != 0){
+                        ll.setVisibility(View.GONE);
+                        mReciclerView.setVisibility(View.VISIBLE);
+                    }else{
+                        ll.setVisibility(View.VISIBLE);
+                        mReciclerView.setVisibility(View.GONE);
+                    }
+                }
+            }else{
+                Toast.makeText(getActivity(),"No se han encontrado coincidencias",Toast.LENGTH_SHORT).show();
+            }
         }catch(JSONException e){
             e.printStackTrace();
         }
@@ -172,16 +178,18 @@ public class restricted_consult extends Fragment {
         searchType = selectedSearchType.getText().toString();
     }
 
-    private void hideEmptyVetadosView(){
-
-    }
-
     private void setListeners(){
         goSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearSearchResults();
                 getSearchString();
-                getNetworkVetadoData(searchString,searchType);
+                if(searchString.equals("")){
+                    Toast.makeText(getActivity(),"Ingresa un termino de busqueda",Toast.LENGTH_SHORT).show();
+                }else{
+                    getNetworkVetadoData(searchString,searchType);
+                    clearSearchBox();
+                }
             }
         });
 
@@ -191,6 +199,15 @@ public class restricted_consult extends Fragment {
                 selectedSearchType = group.findViewById(checkedId);
             }
         });
+    }
+
+    private void clearSearchBox(){
+        searchBox.setText("");
+    }
+
+    private void clearSearchResults(){
+        vetados.clear();
+        mAdapter.notifyDataSetChanged();
     }
 
     //ReciclerView adapter
@@ -228,10 +245,13 @@ public class restricted_consult extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull VetadoSearchViewHolder holder, int position) {
+            Resources res = getResources();
             Vetado vt = mDataset.get(position);
+            String pText = res.getString(R.string.provider_vetado_placeholder,vt.getProvider_alias());
+            String tVeto = res.getString(R.string.tipo_veto_placeholder,vt.getRestriction_type());
             holder.person_name.setText(vt.getPerson_fullname());
-            holder.person_provider.setText(vt.getProvider_alias());
-            holder.tipo_veto.setText(vt.getRestriction_type());
+            holder.person_provider.setText(pText);
+            holder.tipo_veto.setText(tVeto);
         }
 
         @Override
