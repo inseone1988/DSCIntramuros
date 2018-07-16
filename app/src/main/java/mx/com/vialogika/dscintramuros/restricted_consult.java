@@ -2,7 +2,6 @@ package mx.com.vialogika.dscintramuros;
 
 
 import android.content.res.Resources;
-import android.databinding.ObservableArrayList;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
@@ -18,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.databinding.ObservableList;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -47,6 +45,7 @@ public class restricted_consult extends Fragment {
     private JSONObject vetadosData;
     private List<Vetado> vetados;
 
+    private TextView waitingText;
     private EditText searchBox;
     private ImageView goSearch;
     private RadioGroup searchTypeContainer;
@@ -95,7 +94,7 @@ public class restricted_consult extends Fragment {
     }
 
     private void initializeVetados(){
-        vetados = new ObservableArrayList<>();
+        vetados = new ArrayList<>();
     }
 
     @Override
@@ -115,6 +114,7 @@ public class restricted_consult extends Fragment {
         Databases.vetadoSearch(searchString, searchType, getActivity(), new Databases.callbacks() {
             @Override
             public void onResponse(JSONObject response) {
+                waitingText.setText(R.string.fetching);
                 setAndMapResponse(response);
             }
 
@@ -134,6 +134,7 @@ public class restricted_consult extends Fragment {
 
         try{
             if(response.getBoolean("success")){
+                waitingText.setText(R.string.processing);
                 JSONArray payload = response.getJSONArray("payload");
                 for(int i = 0;i < payload.length();i++){
                     response = payload.getJSONObject(i);
@@ -171,6 +172,7 @@ public class restricted_consult extends Fragment {
         selectedSearchType = v.findViewById(searchTypeContainer.getCheckedRadioButtonId());
         mReciclerView = v.findViewById(R.id.vetados_view);
         ll = v.findViewById(R.id.empty_vetados);
+        waitingText = v.findViewById(R.id.waiting_text);
     }
 
     private void getSearchString(){
@@ -187,6 +189,7 @@ public class restricted_consult extends Fragment {
                 if(searchString.equals("")){
                     Toast.makeText(getActivity(),"Ingresa un termino de busqueda",Toast.LENGTH_SHORT).show();
                 }else{
+                    waitingText.setText(R.string.searching);
                     getNetworkVetadoData(searchString,searchType);
                     clearSearchBox();
                 }
@@ -208,11 +211,11 @@ public class restricted_consult extends Fragment {
     private void clearSearchResults(){
         vetados.clear();
         mAdapter.notifyDataSetChanged();
+        mReciclerView.setVisibility(View.GONE);
+        ll.setVisibility(View.VISIBLE);
     }
 
     //ReciclerView adapter
-
-
     private class VetadoSearchAdapter extends RecyclerView.Adapter<VetadoSearchAdapter.VetadoSearchViewHolder>{
 
         private List<Vetado> mDataset;

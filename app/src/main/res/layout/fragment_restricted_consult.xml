@@ -101,12 +101,13 @@
 
         <ImageView
             android:id="@+id/no_data"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_marginBottom="25dp"
             android:src="@drawable/maps_and_flags" />
 
         <TextView
+            android:id="@+id/waiting_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/no_data"

@@ -30,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/person_name"
+            android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/person_image"
             android:text="@string/exampletext"
             android:textSize="15sp" />
@@ -39,6 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/person_provider"
+            android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/person_image"
             android:text="@string/exampletext"
             android:textSize="15sp" />
