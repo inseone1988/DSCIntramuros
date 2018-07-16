@@ -130,5 +130,6 @@
     <string name="by_name">Nombre</string>
     <string name="by_provider">Proveedor</string>
     <string name="vetado_consult_title">Consulta de personal con accesso restringido</string>
+    <string name="start_new_search_prompt">Entre una cadena de busqueda</string>
     <string name="media_output_error_text">Ha ocurrido un error al intentar crear el archivo, asegurese de que la tarjeta sd este insertada y la aplicacion tenga los permisos necesarios e intente de nuevo.</string>
 </resources>

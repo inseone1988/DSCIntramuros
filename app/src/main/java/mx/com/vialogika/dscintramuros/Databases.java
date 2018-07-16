@@ -42,7 +42,7 @@ public class Databases {
     private int OK = 200;
     private int NOTFOUND = 404;
     private JsonRequest  jsonR;
-
+    private JSONObject vetadoData;
     public Databases(){
     }
 
@@ -272,6 +272,53 @@ public class Databases {
             ids[i] = id;
         }
         return ids;
+    }
+
+    public static void vetadoSearch(String searchString,String searchType,Context context,final callbacks cb){
+        try{
+            JSONObject wrapper = new JSONObject();
+            JSONObject data = new JSONObject();
+            data.put("string",searchString);
+            data.put("searchtype",searchType);
+            wrapper.put("function","searchRestricted");
+            wrapper.put("data",data);
+            searchVetadoResponse(wrapper, context, new callbacks() {
+                @Override
+                public void onResponse(JSONObject response) {
+                        cb.onResponse(response);
+                }
+
+                @Override
+                public void onResponseError(VolleyError error) {
+                    cb.onResponseError(error);
+                }
+
+                @Override
+                public void onDbUpdateSuccess() {
+
+                }
+            });
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void searchVetadoResponse(JSONObject data,Context context,final callbacks cb){
+        String url = "https://www.vialogika.com.mx/dscic/raw.php";
+        RequestQueue mQueue = Volley.newRequestQueue(context);
+        JsonRequest rq = new JsonObjectRequest(Request.Method.POST, url, data, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(final JSONObject response) {
+                cb.onResponse(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                cb.onResponseError(error);
+            }
+        });
+        mQueue.add(rq);
     }
 
     public static void SavePlantillaToServer(String grupo, Context context, final generic callback) throws JSONException{

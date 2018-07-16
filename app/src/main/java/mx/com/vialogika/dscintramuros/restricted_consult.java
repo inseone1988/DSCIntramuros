@@ -1,6 +1,7 @@
 package mx.com.vialogika.dscintramuros;
 
 
+import android.databinding.ObservableArrayList;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
@@ -12,10 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.databinding.ObservableList;
 
+import com.android.volley.VolleyError;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,6 +42,8 @@ public class restricted_consult extends Fragment {
 
     private String searchString;
     private String searchType;
+    private JSONObject vetadosData;
+    private List<Vetado> vetados;
 
     private EditText searchBox;
     private ImageView goSearch;
@@ -41,6 +53,7 @@ public class restricted_consult extends Fragment {
     private RecyclerView mReciclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private LinearLayout ll;
 
 
     // TODO: Rename and change types of parameters
@@ -79,38 +92,96 @@ public class restricted_consult extends Fragment {
         }
     }
 
+    private void initializeVetados(){
+        vetados = new ObservableArrayList<>();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_restricted_consult, container, false);
-        getItems(root);
-        setListeners();
+            View root = null;
+            initializeVetados();
+            root = inflater.inflate(R.layout.fragment_restricted_consult, container, false);
+            getItems(root);
+            setup();
+            setListeners();
         return root;
     }
 
+    private void getNetworkVetadoData(String searchString,String searchType){
+        Databases.vetadoSearch(searchString, searchType, getActivity(), new Databases.callbacks() {
+            @Override
+            public void onResponse(JSONObject response) {
+                setAndMapResponse(response);
+            }
+
+            @Override
+            public void onResponseError(VolleyError error) {
+
+            }
+
+            @Override
+            public void onDbUpdateSuccess() {
+
+            }
+        });
+    }
+
+    private void setAndMapResponse(JSONObject response){
+        try{
+            JSONArray payload = response.getJSONArray("payload");
+            for(int i = 0;i < payload.length();i++){
+                response = payload.getJSONObject(i);
+                Vetado vt = new Vetado(response.getInt("idpersons"),response.getString("due_date"),response.getString("person_fullname"),response.getString("provider_alias"),response.getString("restriction_obs"),response.getString("restriction_type"));
+                vetados.add(vt);
+                mAdapter.notifyDataSetChanged();
+                if(vetados.size() != 0){
+                    ll.setVisibility(View.GONE);
+                    mReciclerView.setVisibility(View.VISIBLE);
+                }else{
+                    ll.setVisibility(View.VISIBLE);
+                    mReciclerView.setVisibility(View.GONE);
+                }
+            }
+
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+    }
 
     private void setup(){
+        mAdapter = new VetadoSearchAdapter(vetados);
         mLayoutManager = new LinearLayoutManager(getActivity());
+        mReciclerView.setLayoutManager(mLayoutManager);
+        mReciclerView.setAdapter(mAdapter);
+
     }
 
     private void getItems(View v){
         searchBox = v.findViewById(R.id.search);
         goSearch = v.findViewById(R.id.go_search);
         searchTypeContainer = v.findViewById(R.id.search_type_cont);
+        selectedSearchType = v.findViewById(searchTypeContainer.getCheckedRadioButtonId());
         mReciclerView = v.findViewById(R.id.vetados_view);
-
+        ll = v.findViewById(R.id.empty_vetados);
     }
 
     private void getSearchString(){
         searchString = searchBox.getText().toString();
+        searchType = selectedSearchType.getText().toString();
+    }
+
+    private void hideEmptyVetadosView(){
+
     }
 
     private void setListeners(){
         goSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                getSearchString();
+                getNetworkVetadoData(searchString,searchType);
             }
         });
 
@@ -127,11 +198,12 @@ public class restricted_consult extends Fragment {
 
     private class VetadoSearchAdapter extends RecyclerView.Adapter<VetadoSearchAdapter.VetadoSearchViewHolder>{
 
+        private List<Vetado> mDataset;
+
 
         public class VetadoSearchViewHolder extends RecyclerView.ViewHolder{
             CardView container;
             TextView person_name,person_provider,tipo_veto;
-
             public VetadoSearchViewHolder(View v){
                 super(v);
                 container = v.findViewById(R.id.vetado_container);
@@ -141,26 +213,30 @@ public class restricted_consult extends Fragment {
             }
         }
 
-        public VetadoSearchAdapter() {
-
+        public VetadoSearchAdapter(List<Vetado> vetados) {
+                mDataset = vetados;
         }
 
         @NonNull
         @Override
         public VetadoSearchViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.vetado_view,parent,false);
+            View itemView;
+                itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.vetado_view,parent,false);
             return new VetadoSearchViewHolder(itemView);
         }
 
         @Override
         public void onBindViewHolder(@NonNull VetadoSearchViewHolder holder, int position) {
-
+            Vetado vt = mDataset.get(position);
+            holder.person_name.setText(vt.getPerson_fullname());
+            holder.person_provider.setText(vt.getProvider_alias());
+            holder.tipo_veto.setText(vt.getRestriction_type());
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+            return mDataset.size();
         }
     }
 }
