@@ -26,6 +26,7 @@ interface actions{
     void onApostamientoSaved(EditPlaces instance);
     void onIncidenceConfirm(EditPlaces instance);
     void onSaveToDb(EditPlaces instance);
+    int checkHasElements();
 }
 public class EditPlaces{
     private int total;
@@ -164,6 +165,10 @@ public class EditPlaces{
         mDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);
     }
 
+    private void enableReportButton(){
+        mDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(true);
+    }
+
     private void alreadySavedGroupMonitor(){
         if(!MODE.equals("new")){
             if(Databases.plantillaIsSaved(grupo)){
@@ -181,7 +186,17 @@ public class EditPlaces{
 
     private void monitor(){
         noElementsMonitor();
+        disableEnviarIfEmpty();
         //alreadySavedGroupMonitor();
+    }
+
+    private void disableEnviarIfEmpty(){
+        int size = callbacks.checkHasElements();
+         if(size < 1){
+             disableReportButton();
+         }else{
+             enableReportButton();
+         }
     }
 
     private boolean getHasIncidence(){

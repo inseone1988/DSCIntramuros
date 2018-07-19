@@ -17,7 +17,8 @@ public class Elementos extends SugarRecord<Elementos>{
     private String person_lname;
     private String guard_range;
     private String person_photo_path;
-
+    private String guard_grupo;
+    private int guard_turno;
 
 public Elementos(){
 
@@ -97,5 +98,21 @@ this.person_photo_path = element_photo_path;
 
     public void setGuardFullName(String guardFullName) {
         this.guardFullName = guardFullName;
+    }
+
+    public String getGuard_grupo() {
+        return guard_grupo;
+    }
+
+    public void setGuard_grupo(String guard_grupo) {
+        this.guard_grupo = guard_grupo;
+    }
+
+    public int getGuard_turno() {
+        return guard_turno;
+    }
+
+    public void setGuard_turno(int guard_turno) {
+        this.guard_turno = guard_turno;
     }
 }

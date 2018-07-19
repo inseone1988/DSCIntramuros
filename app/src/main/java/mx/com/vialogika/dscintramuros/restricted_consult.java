@@ -1,6 +1,8 @@
 package mx.com.vialogika.dscintramuros;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -11,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -131,7 +134,6 @@ public class restricted_consult extends Fragment {
     }
 
     private void setAndMapResponse(JSONObject response){
-
         try{
             if(response.getBoolean("success")){
                 waitingText.setText(R.string.processing);
@@ -150,6 +152,7 @@ public class restricted_consult extends Fragment {
                     }
                 }
             }else{
+                waitingText.setText(R.string.no_results);
                 Toast.makeText(getActivity(),"No se han encontrado coincidencias",Toast.LENGTH_SHORT).show();
             }
         }catch(JSONException e){
@@ -188,7 +191,9 @@ public class restricted_consult extends Fragment {
                 getSearchString();
                 if(searchString.equals("")){
                     Toast.makeText(getActivity(),"Ingresa un termino de busqueda",Toast.LENGTH_SHORT).show();
+                    waitingText.setText(R.string.no_results);
                 }else{
+                    hideKeyboard();
                     waitingText.setText(R.string.searching);
                     getNetworkVetadoData(searchString,searchType);
                     clearSearchBox();
@@ -213,6 +218,12 @@ public class restricted_consult extends Fragment {
         mAdapter.notifyDataSetChanged();
         mReciclerView.setVisibility(View.GONE);
         ll.setVisibility(View.VISIBLE);
+    }
+
+    private void hideKeyboard(){
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View v = getActivity().getCurrentFocus();
+        imm.hideSoftInputFromWindow(v.getWindowToken(),0);
     }
 
     //ReciclerView adapter

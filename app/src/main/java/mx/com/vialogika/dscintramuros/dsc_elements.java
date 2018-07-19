@@ -20,11 +20,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.VolleyError;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -93,12 +97,6 @@ public class dsc_elements extends Fragment {
         }
     }
 
-    /**
-     * Called when the fragment is visible to the user and actively running.
-     * This is generally
-     * tied to {@link Activity#onResume() Activity.onResume} of the containing
-     * Activity's lifecycle.
-     */
     @Override
     public void onResume() {
         super.onResume();
@@ -218,6 +216,7 @@ public class dsc_elements extends Fragment {
             ImageView element_action_menu;
 
            public ElementViewHolder(View view){
+
                 super(view);
                     cv = (CardView) view.findViewById(R.id.element_item);
                     element_photo = (ImageView) view.findViewById(R.id.person_photo);
@@ -225,15 +224,40 @@ public class dsc_elements extends Fragment {
                     element_apt = (TextView) view.findViewById(R.id.person_apt);
                     element_action_menu = (ImageView) view.findViewById(R.id.element_menu);
             }
-
         }
 
-        public void deleteElement(Long element_id,int position){
-            Elementos element = Elementos.findById(Elementos.class,element_id);
-            element.delete();
-            mDataset.remove(position);
-            dsc_elements.this.mAdapter.notifyItemRemoved(position);
-            dsc_elements.this.mAdapter.notifyItemRangeChanged(position,mDataset.size());
+        public void deleteElement(Long element_id,final int position){
+            //First try to notify server flag element
+            final Elementos element = Elementos.findById(Elementos.class,element_id);
+            Databases.requestDeleteElement(element.getGuardHash(), getActivity(), new Databases.callbacks() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try{
+                        if(response.getBoolean("success")){
+                            element.delete();
+                            mDataset.remove(position);
+                            dsc_elements.this.mAdapter.notifyItemRemoved(position);
+                            dsc_elements.this.mAdapter.notifyItemRangeChanged(position,mDataset.size());
+                            Toast.makeText(getActivity(),R.string.delete_success,Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(getActivity(),response.getString("error"),Toast.LENGTH_SHORT).show();
+                        }
+                    }catch(JSONException e){
+                        e.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onResponseError(VolleyError error) {
+
+                }
+
+                @Override
+                public void onDbUpdateSuccess() {
+
+                }
+            });
         }
 
         public Bitmap profileImage(String profile_image_path){

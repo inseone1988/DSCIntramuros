@@ -136,5 +136,10 @@
     <string name="searching">Buscando</string>
     <string name="fetching">Respuesta obtenida</string>
     <string name="processing">Procesando</string>
+    <string name="no_results">No hay resultados</string>
+    <string name="good_to_go">Sounds good</string>
+    <string name="element_delete_Failed_message">Fallo al actualizar elemento.Intente mas tarde</string>
+    <string name="element_delete">Respuesta del servidor no valida</string>
+    <string name="delete_success">Eliminado Correctamente</string>
     <string name="media_output_error_text">Ha ocurrido un error al intentar crear el archivo, asegurese de que la tarjeta sd este insertada y la aplicacion tenga los permisos necesarios e intente de nuevo.</string>
 </resources>

@@ -144,7 +144,7 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
                 fragment = new PIEFragment();
                 break;
             case 4:
-                fragment = new restricted_consult(); //TODO:Edit restricted acces layout and class
+                fragment = new restricted_consult();
         }
         return fragment;
     }

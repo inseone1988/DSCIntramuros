@@ -148,8 +148,10 @@ public class Databases {
         String to = sNow();
         String[] args = new String[]{grupo,from,to};
         List<Plantillas> pl = Plantillas.find(Plantillas.class,"TURNO = ? AND DATE BETWEEN ? AND ? ",args);
-        if(pl.get(0).getSaved().equals("saved")){
-            isSaved = true;
+        if(pl.size() > 0){
+            if(pl.get(0).getSaved().equals("saved")){
+                isSaved = true;
+            }
         }
         return isSaved;
     }
@@ -190,6 +192,30 @@ public class Databases {
         }catch(JSONException e){
             e.printStackTrace();
         }
+    }
+
+    public static void requestDeleteElement(String elementHash,Context context,final callbacks cb){
+        String url = "https://www.vialogika.com.mx/dscic/raw.php";
+        RequestQueue rq = Volley.newRequestQueue(context);
+        JSONObject rData = new JSONObject();
+        try{
+            rData.put("function","deleteElement");
+            rData.put("elementhash",elementHash);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+        JsonRequest request = new JsonObjectRequest(JsonRequest.Method.POST, url, rData, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                cb.onResponse(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                cb.onResponseError(error);
+            }
+        });
+        rq.add(request);
     }
 
     private static void saveApsplaces(JSONObject dataToSave, final Context context, final callbacks callback){
@@ -449,7 +475,6 @@ public class Databases {
             result = true;
         }
         return result;
-
     }
 
 
@@ -470,7 +495,6 @@ public class Databases {
             el.get(0).setGuard_range(range);
             Elementos.saveInTx(el.get(0));
         }
-
     }
 
     public Boolean elementExists(String GuardHash){
@@ -480,6 +504,14 @@ public class Databases {
             result = true;
         }
         return result;
+    }
+
+    private void deleteElementsNotSynced(){
+        List<Elementos> notSynced = Elementos.find(Elementos.class,"GUARD_HASH IS NULL OR GUARD_HASH = ''");
+        for(int i = 0;i<notSynced.size();i++){
+            Elementos el = notSynced.get(i);
+            el.delete();
+        }
     }
 
     public Boolean SyncDatabaseFromServer(JSONObject Data,String Table) throws JSONException{
@@ -493,6 +525,8 @@ public class Databases {
                     SaveToElementos(obj);
                 }
                 //cb.onResponse(Data);
+                //This purges elements not synced with server
+                deleteElementsNotSynced();
                 result = true;
                 break;
             case "Apostamientos":

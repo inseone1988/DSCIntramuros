@@ -9,6 +9,7 @@ public class GruposView {
     private String plantillaCount;
     private String grupo;
     private String saved;
+    private boolean isEditable;
 
     public GruposView(String saved,int gpoNo,String siteName,String providerName,String plantillaTotal,String plantillaCount,String gpo){
         this.saved = saved;

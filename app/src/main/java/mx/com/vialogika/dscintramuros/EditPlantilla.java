@@ -70,7 +70,9 @@ import java.util.List;
                     @Override
                     public void onApDeleted(int position) {
                         mAps.remove(position);
-                        mAdapter.notifyDataSetChanged();
+                        mRecyclerview.removeViewAt(position);
+                        mAdapter.notifyItemRemoved(position);
+                        mAdapter.notifyItemRangeChanged(position,mAps.size());
                     }
                 });
                 mRecyclerview = rootview.findViewById(R.id.edit_plantilla);
@@ -112,7 +114,7 @@ import java.util.List;
      private void testMessage(){
          new MaterialDialog.Builder(this)
                  .title("Editando " + groupToEdit)
-                 .content("entrado en modo " + this.MODE)
+                 .content("Entrado en modo " + this.MODE)
                  .show();
      }
 
@@ -138,6 +140,11 @@ import java.util.List;
                         public void onSaveToDb(EditPlaces instance) {
                             instance.hideDialog();
                             confirmGuardar(instance.getGrupo());
+                        }
+
+                        @Override
+                        public int checkHasElements() {
+                            return mAps.size() ;
                         }
                     });
                 }
@@ -195,8 +202,8 @@ import java.util.List;
         }
 
         @Override
-        public void onBindViewHolder(ElementoViewHolder VH,int position){
-            currPosition = position -1;
+        public void onBindViewHolder(ElementoViewHolder VH, final int position){
+            currPosition = position;
             final Aps guard = mDataset.get(position);
             if(guard != null){
                 Bitmap guardProfilePhoto = profileImage(guard.getPerson_photo());
@@ -206,7 +213,7 @@ import java.util.List;
                 VH.element_action_menu.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        deleteAp(guard.getApid());
+                        deleteAp(guard.getApid(),position);
                     }
                 });
                 if(guardProfilePhoto != null){
@@ -214,13 +221,12 @@ import java.util.List;
                 }else{
                     VH.element_photo.setImageResource(R.drawable.profile_no_camera);
                 }
-
             }
         }
 
-        private void deleteAp(long id){
+        private void deleteAp(long id,int position){
             Databases.deleteApFromDb(id);
-            callbacks.onApDeleted(currPosition);
+            callbacks.onApDeleted(position);
         }
 
         @NonNull
@@ -235,7 +241,6 @@ import java.util.List;
             CardView cv;
             TextView element_fullname;
             TextView element_apt;
-            TextView elementid;
             ImageView element_photo;
             ImageView element_action_menu;
             public ElementoViewHolder(View view){

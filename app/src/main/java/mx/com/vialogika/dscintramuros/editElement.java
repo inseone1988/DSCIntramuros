@@ -8,13 +8,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.app.ActionBar;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.app.Activity;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -34,6 +39,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -47,14 +53,21 @@ interface onDatabaseSave{
 
 public class editElement extends Activity {
     Context context = getApplication();
-    SimpleDateFormat today = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-    String profile_image_path;
-    EditText nombre, apellidoP, apellidoM;
-    ImageView profile_photo;
-    AutoCompleteTextView dropdown;
-    Button btn;
-    String Nombre,ApellidoM,ApellidoP,TipoElemento;
-    UserProfileSettings us;
+
+    private String profile_image_path;
+    private String Nombre,ApellidoM,ApellidoP,TipoElemento,grupo;
+    private int turno;
+
+    private ArrayAdapter<String> tAdapater,gAdapter;
+    private List<String> turnosArr,gruposArr;
+    private EditText nombre, apellidoP, apellidoM,mGrupo;
+    private ImageView imageview;
+    private AutoCompleteTextView dropdown;
+    private Spinner grupoSpin,turnoSpin;
+    private Button btn;
+    private TextView message;
+
+    private UserProfileSettings us;
 
     private static final String[] APOSTAMIENTOS = new String[]{"Jefe de turno","Jefe de servicio","Elemento de seguridad","Guardia armado"};
 
@@ -81,11 +94,66 @@ public class editElement extends Activity {
         ActionBar actionbar = getActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_edit_element);
-
-        final ImageView imageview = findViewById(R.id.picture);
+        getItems();
+        init();
+        setup();
+        setListeners();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,APOSTAMIENTOS);
-        dropdown = findViewById(R.id.element_type);
         dropdown.setAdapter(adapter);
+    }
+
+    private void init(){
+        turnosArr = new ArrayList<>();
+        gruposArr = new ArrayList<>();
+        populateArrays();
+        tAdapater = new ArrayAdapter<String>(this,R.layout.spinner_item,turnosArr);
+        gAdapter = new ArrayAdapter<String>(this,R.layout.spinner_item,gruposArr);
+    }
+
+    private void setup(){
+        grupoSpin.setAdapter(gAdapter);
+        turnoSpin.setAdapter(tAdapater);
+    }
+
+    private void populateArrays(){
+        String[] mGrupos = new String[]{"Grupo 1","Grupo 2","Grupo 3","Externo"};
+        String[] mTurnos = new String[]{"12","24"};
+        for(int i = 0; i < mGrupos.length;i++){
+            gruposArr.add(mGrupos[i]);
+        }
+        for(int i = 0; i < mTurnos.length;i++){
+            turnosArr.add(mTurnos[i]);
+        }
+    }
+
+    private void hideKeyboard(){
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View v = this.getCurrentFocus();
+        imm.hideSoftInputFromWindow(v.getWindowToken(),0);
+    }
+
+    private void getItems(){
+        btn = findViewById(R.id.submit_element);
+        nombre = findViewById(R.id.element_name);
+        apellidoP = findViewById(R.id.element_ln);
+        apellidoM = findViewById(R.id.element_fname);
+        dropdown = findViewById(R.id.element_type);
+        imageview = findViewById(R.id.picture);
+        grupoSpin = findViewById(R.id.grupos);
+        turnoSpin = findViewById(R.id.turnos);
+        message = findViewById(R.id.textView);
+    }
+
+    private void getValues(){
+       Nombre = nombre.getText().toString();
+       ApellidoP = apellidoP.getText().toString();
+       ApellidoM = apellidoM.getText().toString();
+       TipoElemento = dropdown.getText().toString();
+       grupo = grupoSpin.getSelectedItem().toString();
+       turno = Integer.parseInt(turnoSpin.getSelectedItem().toString());
+    }
+
+    private void setListeners(){
         imageview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,18 +162,15 @@ public class editElement extends Activity {
                 startActivityForResult(intent,REQUEST_CODE);
             }
         });
-        btn = findViewById(R.id.submit_element);
-        nombre = findViewById(R.id.element_name);
-        apellidoP = findViewById(R.id.element_ln);
-        apellidoM = findViewById(R.id.element_fname);
         btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                hideKeyboard();
                 //Submit data to database and network
                 //First local database
                 if(verifyInputs()){
                     try {
-                       final Long  insId = saveElement();
+                        final Long  insId = saveElement();
                         JSONObject obj = formatElementData(insId);
                         uploadData(obj, new onDatabaseSave() {
                             @Override
@@ -119,23 +184,18 @@ public class editElement extends Activity {
                                     String hash = obj.getString("ghash");
                                     uploadMultipart(obj);
                                     Databases.saveGhash(insId,hash);
+                                    finish();
                                 }catch(JSONException error){
                                     error.printStackTrace();
                                 }
-
                             }
                         });
 
                     }catch(JSONException e){
-                        new MaterialDialog.Builder(getApplication())
-                                .title("Error")
-                                .content(e.toString())
-                                .positiveText("Ok")
-                                .show();
+                        e.printStackTrace();
                     }
                 }
-                finish();
-
+                //finish();
             }
         });
     }
@@ -155,6 +215,8 @@ public class editElement extends Activity {
         obj.put("person_lname",element.getPerson_lname());
         obj.put("person_site_id",siteid);
         obj.put("uid",id);
+        obj.put("guard_group",element.getGuard_grupo());
+        obj.put("guard_turno",element.getGuard_turno());
         return obj;
     }
 
@@ -208,23 +270,49 @@ public class editElement extends Activity {
 
     public Long saveElement(){
         Elementos element = new Elementos(Nombre,ApellidoP,ApellidoM,TipoElemento,profile_image_path);
+        element.setGuard_turno(turno);
+        element.setGuard_grupo(grupo);
         element.save();
         return element.getId();
     }
 
+    private void showNoValidElements(){
+        new CountDownTimer(10000,1000){
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                message.setText(R.string.fields_required_text);
+            }
+        }.start();
+    }
+
     public boolean verifyInputs(){
         boolean result = false;
-        Nombre = nombre.getText().toString();
-        ApellidoP = apellidoP.getText().toString();
-        ApellidoM = apellidoM.getText().toString();
-        TipoElemento = dropdown.getText().toString();
-        if(!isEmpty(Nombre) && !isEmpty(ApellidoP) && !isEmpty(ApellidoM) && !isEmpty(TipoElemento)){
-            result = true;
-        }else{
-
+        String nl = System.getProperty("line.separator");
+        StringBuffer buff = new StringBuffer();
+        getValues();
+        buff.append(appendString(Nombre,".-Verifique nombre"+nl));
+        buff.append(appendString(ApellidoP,".-Verifique apellido materno"+nl));
+        buff.append(appendString(ApellidoM,".-Verifique apellido paterno"+nl));
+        buff.append(appendString(TipoElemento,".-Verifique tipo elemento"+nl));
+        buff.append(appendString(String.valueOf(turno),".-Verifique turno"+nl));
+        buff.append(appendString(grupo,".-Verifique grupo"+nl));
+        result = isEmpty(buff.toString());
+        if(!result){
+            message.setText(buff.toString());
+            showNoValidElements();
         }
         return result;
     }
+
+    private String appendString(String Field,String Message){
+        return (!isEmpty(Field) ? "":Message);
+    }
+
     public static boolean isEmpty(String edittext){
         String input = edittext.trim();
         return input.length() == 0;
