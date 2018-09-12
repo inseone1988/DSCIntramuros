@@ -1,7 +1,9 @@
 package mx.com.vialogika.dscintramuros;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -22,6 +24,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import mx.com.vialogika.dscintramuros.Utils.Permissions;
+
 public class TakeEvidences extends AppCompatActivity {
 
     private FloatingActionButton mFab;
@@ -35,6 +39,7 @@ public class TakeEvidences extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_evidences);
+        //Check if we have permissions
         getItems();
         setup();
     }
@@ -84,7 +89,55 @@ public class TakeEvidences extends AppCompatActivity {
     }
 
     private void takeSnapshot(){
+        //Check Permissions
+        int REQUESTCCODE = 1;
+        boolean hasCameraPermission = Permissions.hasPermission(getApplicationContext(), Manifest.permission.CAMERA);
+        boolean hasStoragePermission = Permissions.hasPermission(getApplicationContext(),Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(hasCameraPermission && hasStoragePermission){
             cView.captureSnapshot();
+        }else{
+            Permissions.requestPermission(this,new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUESTCCODE);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode){
+            case 1:
+                boolean allPassed = permissionsHasBeenGranted(grantResults);
+                if(allPassed){
+                    cView.captureSnapshot();
+                }else{
+                   permissionsNotGrantedDialog();
+                }
+                break;
+        }
+    }
+
+    private void permissionsNotGrantedDialog(){
+        new MaterialDialog.Builder(this)
+                .title("Permisos")
+                .content("No se han otorgado los permisos requeridos, volver a intentar?")
+                .positiveText("OK")
+                .negativeText("No gracias.")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        finish();
+                    }
+                })
+                .show();
+    }
+
+    private boolean permissionsHasBeenGranted(int[] grantResults){
+        for(int value : grantResults){
+            if(value == PackageManager.PERMISSION_DENIED){
+                return false;
+            }
+        }
+        return true;
     }
 
     private void setIntentResult(){

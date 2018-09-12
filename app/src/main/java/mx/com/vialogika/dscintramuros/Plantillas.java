@@ -24,7 +24,7 @@ public class Plantillas extends SugarRecord<Plantillas> {
     private String incidence_id;
     private String covered_guard_id;
     private String guard_job;
-    private String date; //string date format YYYY-MM-DD HH:MM:SS
+    private String date; // String date format YYYY-MM-DD HH:MM:SS
     private String turno; //Grupo 1, Grupo 2, Grupo 3 etc
     private String saved;
     private String tiempo;
