@@ -14,11 +14,11 @@ android {
     }
     compileSdkVersion 27
     defaultConfig {
-        applicationId "mx.com.vialogika.dscintramuros"
+        applicationId "mx.com.vialogika.mist"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0-Stingray-Beta"
+        versionName "1.0-MIST-Beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
