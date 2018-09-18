@@ -1,4 +1,4 @@
-package mx.com.vialogika.dscintramuros;
+package mx.com.vialogika.mist;
 
 import android.app.AlertDialog;
 import android.content.Context;

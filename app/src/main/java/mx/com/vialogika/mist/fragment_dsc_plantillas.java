@@ -1,4 +1,4 @@
-package mx.com.vialogika.dscintramuros;
+package mx.com.vialogika.mist;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,11 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 

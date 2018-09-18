@@ -1,4 +1,4 @@
-package mx.com.vialogika.dscintramuros;
+package mx.com.vialogika.mist;
 
 import android.content.Context;
 import android.net.Uri;
@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -21,8 +20,6 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;

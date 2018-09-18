@@ -1,18 +1,14 @@
-package mx.com.vialogika.dscintramuros;
+
+package mx.com.vialogika.mist;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
