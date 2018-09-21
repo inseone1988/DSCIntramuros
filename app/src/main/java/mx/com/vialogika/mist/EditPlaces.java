@@ -3,9 +3,11 @@ package mx.com.vialogika.mist;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -15,6 +17,8 @@ import com.afollestad.materialdialogs.internal.MDButton;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import mx.com.vialogika.mist.Utils.CustomAutoCompleteTextView;
 
 interface actions{
     void onApostamientoSaved(EditPlaces instance);
@@ -42,6 +46,8 @@ public class EditPlaces{
     private Aps lastSavedAp;
     private actions callbacks;
 
+    private CustomAutoCompleteTextView gedit,apedit;
+
     public EditPlaces(Context context,MaterialDialogPayload data,actions mCalbbacks){
         this.MODE = data.getMODE();
         this.grupo = data.getGrupo();
@@ -50,11 +56,24 @@ public class EditPlaces{
         mDialog = setupDialog(context);
         //By default disable incidence reason spinner
         View v = mDialog.getCustomView();
+        init(v);
         disableSpinner(v);
         setDialogData();
         setDialogIteractions(v);
         monitor();
         alreadySavedGroupMonitor();
+    }
+
+    private void init(View v){
+        LinearLayout ll = v.findViewById(R.id.gllayout);
+        LinearLayout ll1 = v.findViewById(R.id.apLinLayout);
+        gedit = new CustomAutoCompleteTextView(mDialog.getContext());
+        gedit.setHint(R.string.guard_name);
+        apedit = new CustomAutoCompleteTextView(mDialog.getContext());
+        apedit.setHint(R.string.element_place);
+        ll.addView(gedit);
+        ll1.addView(apedit);
+
     }
 
     private MaterialDialog setupDialog(Context context){
@@ -69,7 +88,6 @@ public class EditPlaces{
     }
 
     private void setDialogData(){
-
         View v = mDialog.getCustomView();
         //TODO:Set Counters
         //Set group Text
@@ -94,15 +112,13 @@ public class EditPlaces{
     }
 
     private void setElementsdata(View v){
-        AutoCompleteTextView elementsnames = v.findViewById(R.id.guardname);
-        gAdapter = new ArrayAdapter(elementsnames.getContext(),android.R.layout.simple_dropdown_item_1line,elementos);
-        elementsnames.setAdapter(gAdapter);
+        gAdapter = new ArrayAdapter(gedit.getContext(),android.R.layout.simple_dropdown_item_1line,elementos);
+        gedit.setAdapter(gAdapter);
     }
 
     private void setApAutocomplete(View v){
-        AutoCompleteTextView aps = v.findViewById(R.id.apostamiento);
-        apAdapter = new ArrayAdapter(aps.getContext(),android.R.layout.simple_dropdown_item_1line,apList);
-        aps.setAdapter(apAdapter);
+        apAdapter = new ArrayAdapter(apedit.getContext(),android.R.layout.simple_dropdown_item_1line,apList);
+        apedit.setAdapter(apAdapter);
     }
 
     private void setIncidenceList(View v){
@@ -374,15 +390,11 @@ public class EditPlaces{
     }
 
     private void clearElementName(){
-        View dView = mDialog.getCustomView();
-        AutoCompleteTextView atv = dView.findViewById(R.id.guardname);
-        atv.setText("");
+        gedit.setText("");
     }
 
     private void clearApName(){
-        View dView = mDialog.getCustomView();
-        AutoCompleteTextView atv = dView.findViewById(R.id.apostamiento);
-        atv.setText("");
+        apedit.setText("");
     }
 
     private void setGuardOnIncidenceSelect(final View v){
@@ -421,13 +433,11 @@ public class EditPlaces{
     }
 
     private String getGuardName(View v){
-        AutoCompleteTextView gname = v.findViewById(R.id.guardname);
-        return gname.getText().toString();
+        return gedit.getText().toString();
     }
 
     private String getApName(View v){
-        AutoCompleteTextView ap = v.findViewById(R.id.apostamiento);
-        return ap.getText().toString();
+        return apedit.getText().toString();
     }
 
     private String getIncidenceType(View v){

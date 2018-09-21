@@ -56,7 +56,8 @@
             android:label="@string/title_activity_plantillas_editor" />
         <activity
             android:name=".EditPlantilla"
-            android:theme="@style/Theme.AppCompat.Light"></activity>
+            android:theme="@style/Theme.AppCompat.Light"
+            android:windowSoftInputMode="adjustResize"></activity>
         <activity android:name=".TakeEvidences"
             android:theme="@style/Theme.AppCompat.Light"></activity>
     </application>
