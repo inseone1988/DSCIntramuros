@@ -2,6 +2,7 @@
 package mx.com.vialogika.mist;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.app.ActionBar;
 import android.app.Fragment;
@@ -12,10 +13,17 @@ import android.support.v4.widget.DrawerLayout;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.esafirm.imagepicker.features.ImagePicker;
 
 import net.gotev.uploadservice.UploadService;
 
+import com.esafirm.imagepicker.model.Image;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+import id.zelory.compressor.Compressor;
 
 
 interface fab{
@@ -35,12 +43,13 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
     private CharSequence mTitle;
     private List<Elementos> mElementos;
     private List<Apostamientos> mApostamientos;
+    static String images = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
-        ActionBar actionbar =getActionBar();
+        ActionBar actionbar = getActionBar();
         setContentView(R.layout.activity_dsc_dashboard);
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -49,6 +58,33 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, final int resultCode, Intent data) {
+        if(ImagePicker.shouldHandle(requestCode,resultCode,data)){
+            List<com.esafirm.imagepicker.model.Image> selImages = ImagePicker.getImages(data);
+            images = getImagePaths(selImages);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private String compressImage(String imagePath){
+        File imageFile = new File(imagePath);
+        try{
+            return new Compressor(this).compressToFile(imageFile).getAbsolutePath();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    private String getImagePaths(List<com.esafirm.imagepicker.model.Image> images){
+        String paths = "";
+        for(int i = 0; i < images.size();i++){
+            paths += compressImage(images.get(i).getPath())  + ",";
+        }
+        return paths;
     }
 
     @Override
@@ -143,5 +179,17 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
                 fragment = new restricted_consult();
         }
         return fragment;
+    }
+
+    public static String getImages() {
+        return images;
+    }
+
+    public void setImages(String images) {
+        this.images = images;
+    }
+
+    public interface dashboardCallbacks{
+        void onFilepickerActivityResult(int requestCode, final int resultCode, Intent data);
     }
 }

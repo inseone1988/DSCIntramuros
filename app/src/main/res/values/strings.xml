@@ -42,8 +42,8 @@
     <string name="title_activity_dsc_dashboard">Dashboard</string>
     <string name="hello_world">Hello World</string>
     <string name="user_name_hint">Nombre(s)</string>
-    <string name="user_fname_hint">Apellido Materno</string>
-    <string name="user_lname_hint">Apellido Paterno</string>
+    <string name="user_fname_hint">Apellido Paterno</string>
+    <string name="user_lname_hint">Apellido Materno</string>
     <string name="guardar_elemento">Guardar elemento</string>
     <string name="element_image_description">Foto del elemento(Presione para abrir camera)</string>
     <string name="take_picture">Tomar foto</string>

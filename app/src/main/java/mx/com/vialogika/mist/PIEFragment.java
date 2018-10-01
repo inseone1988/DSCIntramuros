@@ -1,8 +1,11 @@
 package mx.com.vialogika.mist;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.VolleyError;
+import com.esafirm.imagepicker.features.ImagePicker;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.ServerResponse;
@@ -33,12 +37,15 @@ import net.gotev.uploadservice.UploadStatusDelegate;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-
+import mx.com.vialogika.mist.Utils.Permissions;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -57,6 +64,8 @@ public class PIEFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private final int PERMISSION_STORAGE= 1150;
+    private final int REQUESTCODE_PHOTO = 1151;
     private String datetime;
     private String eventDate;
     private String eventType;
@@ -76,6 +85,7 @@ public class PIEFragment extends Fragment {
     private String redactor;
 
     private List<String> incidenceNames;
+    private ArrayList<String> alreadyselectedimages = new ArrayList<>();
     private String[] incNames = new String[]{"Malas practicas","Condicion insegura","Intento/Sustraccion de producto","Consumo de producto","Acto inseguro","Daño a instalaciones","Riña","Intento de intrusion","Colision de Vehiculos","Lesiones","Ingreso con objetos prohibidos","Otro incidente"};
 
 
@@ -85,7 +95,7 @@ public class PIEFragment extends Fragment {
     private CheckBox responsible,evidence;
     private EditText eventHour,mWhat,mHow,mWhen,mWhere,mFacts,mRedactor;
     private Button firmas,takeEvidence,save;
-    private TextClock eDate;
+    private EditText eDate;
 
     private OnFragmentInteractionListener mListener;
 
@@ -121,6 +131,13 @@ public class PIEFragment extends Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+       // super.onActivityResult(requestCode, resultCode, data);
+
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_pie, container, false);
@@ -132,6 +149,7 @@ public class PIEFragment extends Fragment {
 
     private void setUp(){
         //Spinners and other data initializations that depends on layout already inflated
+        eDate.setText(getCurrentDate());
         setUpSpinner();
     }
 
@@ -162,6 +180,10 @@ public class PIEFragment extends Fragment {
         save = v.findViewById(R.id.save_and_send);
     }
 
+    private String getCurrentDate(){
+        return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    }
+
     private void clearFields(){
         eventHour.setText("");
         highlights.check(R.id.pie_sem_null);
@@ -184,12 +206,14 @@ public class PIEFragment extends Fragment {
         takeEvidence.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                captureEvidences();
+                getEvidenceFiles();
+                //captureEvidences();
             }
         });
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getImagePaths();
                 confirmPlantillaSend(new OnIncidenceConfirm() {
                     @Override
                     public void send() {
@@ -216,6 +240,19 @@ public class PIEFragment extends Fragment {
                 highlightSelected = group.findViewById(checkedId);
             }
         });
+    }
+
+    private void getImagePaths(){
+        images = dsc_dashboard.getImages();
+    }
+
+    private void getEvidenceFiles(){
+        if(Permissions.hasPermission(this.getActivity(),Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            ImagePicker.create(this.getActivity())
+                    .start();
+        }else{
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_STORAGE);
+        }
     }
 
     private void saveIncidence(){
@@ -346,31 +383,24 @@ public class PIEFragment extends Fragment {
         startActivityForResult(intent,REQUEST_CODE);
     }
 
-    /**
-     * Receive the result from a previous call to
-     * {@link #startActivityForResult(Intent, int)}.  This follows the
-     * related Activity API as described there in
-     * {@link Activity#onActivityResult(int, int, Intent)}.
-     *
-     * @param requestCode The integer request code originally supplied to
-     *                    startActivityForResult(), allowing you to identify who this
-     *                    result came from.
-     * @param resultCode  The integer result code returned by the child activity
-     *                    through its setResult().
-     * @param data        An Intent, which can return result data to the caller
-     */
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch(requestCode){
-            case 1:
-                if(resultCode == Activity.RESULT_OK){
-                    images += data.getStringExtra("images_paths");
+            case PERMISSION_STORAGE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    getEvidenceFiles();
                 }
                 break;
-            default :
-                break;
         }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private String mapEvicencesArray(List<String> response){
+        String values = "";
+        for(int i = 0; i < response.size(); i++ ){
+            values += response.get(i);
+        }
+        return values;
     }
 
     private void getFormValues(){
@@ -388,6 +418,11 @@ public class PIEFragment extends Fragment {
         redactor = mRedactor.getText().toString();
     }
 
+    private boolean FileExists(String path){
+        File image = new File(path);
+        return image.exists();
+    }
+
     private void uploadMultipart(final long incId){
         //First check for empty signatures or evidences
         String url = "https://www.vialogika.com.mx/dscic/requesthandler.php";
@@ -397,10 +432,14 @@ public class PIEFragment extends Fragment {
             String[] mSignatures = signatures.split(",");
             MultipartUploadRequest ur = new MultipartUploadRequest(getActivity(),uploadId,url);
                 for(int i = 0;i<evidences.length;i++){
-                    ur.addFileToUpload(evidences[i],"evidence_"+i);
+                    if(FileExists(evidences[i])){
+                        ur.addFileToUpload(evidences[i],"evidence_"+i);
+                    }
                 }
                 for(int i = 0;i<mSignatures.length;i++){
-                    ur.addFileToUpload(mSignatures[i],"signature_"+i);
+                    if(FileExists(mSignatures[i])){
+                        ur.addFileToUpload(mSignatures[i],"signature_"+i);
+                    }
                 }
             ur.addParameter("function","saveEvidences")
                     .setNotificationConfig(new UploadNotificationConfig())
@@ -449,16 +488,6 @@ public class PIEFragment extends Fragment {
                 .content(error)
                 .positiveText("OK")
                 .show();
-    }
-
-    private boolean validateEditTexts(int editText, String value){
-        boolean isValid = false;
-        switch(editText){
-            case R.id.event_timex:
-
-                break;
-        }
-        return isValid;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

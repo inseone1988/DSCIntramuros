@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -56,6 +57,7 @@ public class EditPlaces{
         mDialog = setupDialog(context);
         //By default disable incidence reason spinner
         View v = mDialog.getCustomView();
+        assert v != null;
         init(v);
         disableSpinner(v);
         setDialogData();
@@ -69,8 +71,10 @@ public class EditPlaces{
         LinearLayout ll1 = v.findViewById(R.id.apLinLayout);
         gedit = new CustomAutoCompleteTextView(mDialog.getContext());
         gedit.setHint(R.string.guard_name);
+        gedit.setLayoutParams(ll.getLayoutParams());
         apedit = new CustomAutoCompleteTextView(mDialog.getContext());
         apedit.setHint(R.string.element_place);
+        apedit.setLayoutParams(ll1.getLayoutParams());
         ll.addView(gedit);
         ll1.addView(apedit);
 

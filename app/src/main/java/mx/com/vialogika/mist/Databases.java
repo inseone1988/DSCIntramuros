@@ -700,7 +700,7 @@ public class Databases {
 
     public static long plGroupCount(String group){
         String[] args = new String[]{group};
-        return Plantillas.count(Plantillas.class,"TURNO = ?",args);
+        return Plantillas.count(Plantillas.class,"TURNO = ? AND DATE BETWEEN DATE('now') AND DATE('now','+1 days')",args);
     }
 
     public static long PlantillaNoPlaces(){

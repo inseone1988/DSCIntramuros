@@ -103,9 +103,10 @@ import java.util.List;
      }
 
      private void testMessage(){
+        String mode = this.MODE.equals("new") ? "Nuevo grupo" : "Editar grupo";
          new MaterialDialog.Builder(this)
                  .title("Editando " + groupToEdit)
-                 .content("Entrado en modo " + this.MODE)
+                 .content("Entrado en modo " + mode)
                  .show();
      }
 
