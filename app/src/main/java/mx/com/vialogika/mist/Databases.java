@@ -96,6 +96,7 @@ public class Databases {
                             .positiveText("OK")
                             .show();
                 }
+                error.printStackTrace();
                 cb.onResponseError(error);
             }
         });

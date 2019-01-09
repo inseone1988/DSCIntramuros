@@ -21,35 +21,39 @@ import java.util.List;
 
 import mx.com.vialogika.mist.Utils.CustomAutoCompleteTextView;
 
-interface actions{
+interface actions {
     void onApostamientoSaved(EditPlaces instance);
+
     void onIncidenceConfirm(EditPlaces instance);
+
     void onSaveToDb(EditPlaces instance);
+
     int checkHasElements();
 }
-public class EditPlaces{
-    private int total;
-    private int count;
-    private String grupo;
-    private String MODE;
-    private List<String> elementos;
-    private List<String> apList = Databases.apNames();
-    private List<String> incList;
-    private List<String> incTypelist;
-    private ArrayAdapter gAdapter;
-    private ArrayAdapter apAdapter;
-    private ArrayAdapter incAdapter;
-    private ArrayAdapter increasonAdapter;
-    private Boolean plComplete = false;
-    private Boolean hasincidence = false;
-    private Boolean hasErrors = false;
+
+public class EditPlaces {
+    private int            total;
+    private int            count;
+    private String         grupo;
+    private String         MODE;
+    private List<String>   elementos;
+    private List<String>   apList       = Databases.apNames();
+    private List<String>   incList;
+    private List<String>   incTypelist;
+    private ArrayAdapter   gAdapter;
+    private ArrayAdapter   apAdapter;
+    private ArrayAdapter   incAdapter;
+    private ArrayAdapter   increasonAdapter;
+    private Boolean        plComplete   = false;
+    private Boolean        hasincidence = false;
+    private Boolean        hasErrors    = false;
     private MaterialDialog mDialog;
-    private Aps lastSavedAp;
-    private actions callbacks;
+    private Aps            lastSavedAp;
+    private actions        callbacks;
 
-    private CustomAutoCompleteTextView gedit,apedit;
+    private CustomAutoCompleteTextView gedit, apedit;
 
-    public EditPlaces(Context context,MaterialDialogPayload data,actions mCalbbacks){
+    public EditPlaces(Context context, MaterialDialogPayload data, actions mCalbbacks) {
         this.MODE = data.getMODE();
         this.grupo = data.getGrupo();
         this.callbacks = mCalbbacks;
@@ -66,8 +70,8 @@ public class EditPlaces{
         alreadySavedGroupMonitor();
     }
 
-    private void init(View v){
-        LinearLayout ll = v.findViewById(R.id.gllayout);
+    private void init(View v) {
+        LinearLayout ll  = v.findViewById(R.id.gllayout);
         LinearLayout ll1 = v.findViewById(R.id.apLinLayout);
         gedit = new CustomAutoCompleteTextView(mDialog.getContext());
         gedit.setHint(R.string.guard_name);
@@ -80,10 +84,10 @@ public class EditPlaces{
 
     }
 
-    private MaterialDialog setupDialog(Context context){
+    private MaterialDialog setupDialog(Context context) {
         MaterialDialog dialog = new MaterialDialog.Builder(context)
                 .title("Asignar Apostamiento")
-                .customView(R.layout.add_plantilla_apostamiento,true)
+                .customView(R.layout.add_plantilla_apostamiento, true)
                 .positiveText("Agregar")
                 .negativeText("Guardar")
                 .autoDismiss(false)
@@ -91,7 +95,7 @@ public class EditPlaces{
         return dialog;
     }
 
-    private void setDialogData(){
+    private void setDialogData() {
         View v = mDialog.getCustomView();
         //TODO:Set Counters
         //Set group Text
@@ -102,50 +106,50 @@ public class EditPlaces{
         setInReasList(v);
     }
 
-    private void setGrupoText(View v){
+    private void setGrupoText(View v) {
         TextView grupotext = v.findViewById(R.id.groupNo);
         grupotext.setText(grupo);
     }
 
-    private void getGuardNames(){
-        if(MODE.equals("new")){
+    private void getGuardNames() {
+        if (MODE.equals("new")) {
             elementos = Databases.enames();
-        }else{
+        } else {
             elementos = Databases.availableElementos(grupo);
         }
     }
 
-    private void setElementsdata(View v){
-        gAdapter = new ArrayAdapter(gedit.getContext(),android.R.layout.simple_dropdown_item_1line,elementos);
+    private void setElementsdata(View v) {
+        gAdapter = new ArrayAdapter(gedit.getContext(), android.R.layout.simple_dropdown_item_1line, elementos);
         gedit.setAdapter(gAdapter);
     }
 
-    private void setApAutocomplete(View v){
-        apAdapter = new ArrayAdapter(apedit.getContext(),android.R.layout.simple_dropdown_item_1line,apList);
+    private void setApAutocomplete(View v) {
+        apAdapter = new ArrayAdapter(apedit.getContext(), android.R.layout.simple_dropdown_item_1line, apList);
         apedit.setAdapter(apAdapter);
     }
 
-    private void setIncidenceList(View v){
+    private void setIncidenceList(View v) {
         Spinner spinc = v.findViewById(R.id.incidencia);
-        incAdapter = new ArrayAdapter(spinc.getContext(),android.R.layout.simple_spinner_item,incList);
+        incAdapter = new ArrayAdapter(spinc.getContext(), android.R.layout.simple_spinner_item, incList);
         incAdapter.setDropDownViewResource(R.layout.dsc_spinner_dropdown);
         spinc.setAdapter(incAdapter);
     }
 
-    private void setInReasList(View v){
+    private void setInReasList(View v) {
         Spinner spinre = v.findViewById(R.id.tipoincidncia);
-        increasonAdapter = new ArrayAdapter(spinre.getContext(),android.R.layout.simple_spinner_item,incTypelist);
+        increasonAdapter = new ArrayAdapter(spinre.getContext(), android.R.layout.simple_spinner_item, incTypelist);
         increasonAdapter.setDropDownViewResource(R.layout.dsc_spinner_dropdown);
         spinre.setAdapter(increasonAdapter);
     }
 
-    private void disableSpinner(View v){
+    private void disableSpinner(View v) {
         Spinner sp = v.findViewById(R.id.tipoincidncia);
-        sp.setSelection(0,true);
-                sp.setEnabled(false);
+        sp.setSelection(0, true);
+        sp.setEnabled(false);
     }
 
-    private void getDialogData(){
+    private void getDialogData() {
         //Get counters data
         //Get all elements,Get asigned elements,resolve which list to show
         getGuardNames();
@@ -153,17 +157,17 @@ public class EditPlaces{
         incidencesReasons();
     }
 
-    private boolean validateElement(String element){
+    private boolean validateElement(String element) {
         boolean isvalid = false;
-        if(isAvailable(element)){
+        if (isAvailable(element)) {
             isvalid = true;
         }
         return isvalid;
     }
 
-    private boolean checkIncidence(String incidenceField){
+    private boolean checkIncidence(String incidenceField) {
         boolean isIncidence = false;
-        if(!incidenceField.equals("Tiempo ordinario")){
+        if (!incidenceField.equals("Tiempo ordinario")) {
             isIncidence = true;
             //TODO:Check explicit incidence check by field avoiding set to false when we have incidence
             hasincidence = true;
@@ -171,68 +175,68 @@ public class EditPlaces{
         return isIncidence;
     }
 
-    private void disableSaveGuardButton(){
+    private void disableSaveGuardButton() {
         mDialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
     }
 
-    private void disableReportButton(){
+    private void disableReportButton() {
         mDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);
     }
 
-    private void enableReportButton(){
+    private void enableReportButton() {
         mDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(true);
     }
 
-    private void alreadySavedGroupMonitor(){
-        if(!MODE.equals("new")){
-            if(Databases.plantillaIsSaved(grupo)){
+    private void alreadySavedGroupMonitor() {
+        if (!MODE.equals("new")) {
+            if (Databases.plantillaIsSaved(grupo)) {
                 disableReportButton();
                 disableSaveGuardButton();
             }
         }
     }
 
-    private void noElementsMonitor(){
-        if(elementos.size()==0){
+    private void noElementsMonitor() {
+        if (elementos.size() == 0) {
             mDialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
         }
     }
 
-    private void monitor(){
+    private void monitor() {
         noElementsMonitor();
         disableEnviarIfEmpty();
         //alreadySavedGroupMonitor();
     }
 
-    private void disableEnviarIfEmpty(){
+    private void disableEnviarIfEmpty() {
         int size = callbacks.checkHasElements();
-         if(size < 1){
-             disableReportButton();
-         }else{
-             enableReportButton();
-         }
+        if (size < 1) {
+            disableReportButton();
+        } else {
+            enableReportButton();
+        }
     }
 
-    private boolean getHasIncidence(){
+    private boolean getHasIncidence() {
         return hasincidence;
     }
 
-    private boolean isValidAp(String ap){
+    private boolean isValidAp(String ap) {
         boolean isvalid = false;
-        if(apIsAvailable(ap)){
+        if (apIsAvailable(ap)) {
             isvalid = true;
         }
         return isvalid;
     }
 
-    private TextView getErrorTextView(View v){
+    private TextView getErrorTextView(View v) {
         return (TextView) v.findViewById(R.id.errortext);
     }
 
-    private void setErrorText(View v,String message){
+    private void setErrorText(View v, String message) {
         final TextView errorField = getErrorTextView(v);
         errorField.setText(message);
-        new CountDownTimer(3000, 1000){
+        new CountDownTimer(3000, 1000) {
             /**
              * Callback fired on regular interval.
              *
@@ -253,47 +257,51 @@ public class EditPlaces{
         }.start();
     }
 
-    private void onElementoSave(){
-        long siteid = Databases.siteId(mDialog.getContext());
-        long provid = Databases.providerId(mDialog.getContext());
-        View v = mDialog.getCustomView();
-        String ElementName = getGuardName(v);
-        String ApName = getApName(v);
-        String incidence = getIncidenceType(v);
-        String increason  = getIncidenceReason(v);
-        Elementos element = Databases.getElemento(ElementName);
-        if(isAvailable(ElementName)){
-            if(isValidAp(ApName)){
-                if(checkIncidence(incidence)){
-                Incidences inc = new Incidences(Databases.sNow(),incidence,increason,null);
-                PlantillaPlace pl = new PlantillaPlace(grupo,ElementName,ApName,incidence);
-                inc.save();
-                pl.setSiteId(siteid);
-                pl.setProvId(String.valueOf(provid));
-                pl.setIcId(inc.getMUID());
-                pl.save();
-                removeElement(ElementName);
-                lastSavedAp = new Aps(pl.getId(),ElementName,ApName,element.getPerson_photo_path());
-                callbacks.onIncidenceConfirm(this);
-                callbacks.onApostamientoSaved(this);
-                clearTextFields();
-                monitor();
-                }else{
-                    PlantillaPlace pl = new PlantillaPlace(grupo,ElementName,ApName,incidence);
+    private void onElementoSave() {
+        long      siteid      = Databases.siteId(mDialog.getContext());
+        long      provid      = Databases.providerId(mDialog.getContext());
+        View      v           = mDialog.getCustomView();
+        String    ElementName = getGuardName(v);
+        String    ApName      = getApName(v);
+        String    incidence   = getIncidenceType(v);
+        String    increason   = getIncidenceReason(v);
+        Elementos element     = Databases.getElemento(ElementName);
+        if (isAvailable(ElementName)) {
+            if (isValidAp(ApName)) {
+                if (checkIncidence(incidence)) {
+                    if (!increason.equals("Seleccione")) {
+                        Incidences     inc = new Incidences(Databases.sNow(), incidence, increason, null);
+                        PlantillaPlace pl  = new PlantillaPlace(grupo, ElementName, ApName, incidence);
+                        inc.save();
+                        pl.setSiteId(siteid);
+                        pl.setProvId(String.valueOf(provid));
+                        pl.setIcId(inc.getMUID());
+                        pl.save();
+                        removeElement(ElementName);
+                        lastSavedAp = new Aps(pl.getId(), ElementName, ApName, element.getPerson_photo_path());
+                        callbacks.onIncidenceConfirm(this);
+                        callbacks.onApostamientoSaved(this);
+                        clearTextFields();
+                        monitor();
+                    } else {
+                        setErrorText(v,"Tipo de de incidencia invalido");
+                    }
+                } else {
+                    PlantillaPlace pl = new PlantillaPlace(grupo, ElementName, ApName, incidence);
                     pl.setSiteId(siteid);
                     pl.setProvId(String.valueOf(provid));
                     long id = pl.save();
                     removeElement(ElementName);
-                    lastSavedAp = new Aps(id,ElementName,ApName,element.getPerson_photo_path());
+                    lastSavedAp = new Aps(id, ElementName, ApName, element.getPerson_photo_path());
                     callbacks.onApostamientoSaved(this);
                     clearTextFields();
                     monitor();
                 }
-            }else{
-                setErrorText(v,"Apostamiento no valido");
+            } else {
+                setErrorText(v, "Apostamiento no valido");
             }
-        }else{
-            setErrorText(v,"Elemento no valido");
+        } else {
+            setErrorText(v, "Elemento no valido");
         }
 
     }
@@ -302,47 +310,47 @@ public class EditPlaces{
         return lastSavedAp;
     }
 
-    private void removeElement(String element){
+    private void removeElement(String element) {
         elementos.remove(element);
         gAdapter.notifyDataSetChanged();
     }
 
-    private void removeListItem(List mList, String element){
-        for(int i = 0;i < mList.size();i++){
-            if(mList.get(i).equals(element)){
+    private void removeListItem(List mList, String element) {
+        for (int i = 0; i < mList.size(); i++) {
+            if (mList.get(i).equals(element)) {
                 mList.remove(i);
             }
         }
     }
 
-    private boolean apIsAvailable(String ap){
+    private boolean apIsAvailable(String ap) {
         boolean found = false;
-        for(int i = 0;i < apList.size();i++){
-            if(apList.get(i).equals(ap)){
+        for (int i = 0; i < apList.size(); i++) {
+            if (apList.get(i).equals(ap)) {
                 found = true;
             }
         }
-        return  found;
+        return found;
     }
 
-    private Boolean isAvailable(String element){
+    private Boolean isAvailable(String element) {
         boolean found = false;
-        for(int i = 0;i < elementos.size();i++){
-            if(elementos.get(i).equals(element)){
+        for (int i = 0; i < elementos.size(); i++) {
+            if (elementos.get(i).equals(element)) {
                 found = true;
             }
         }
-        return  found;
+        return found;
     }
 
-    private void setMBOnClick(View view){
-        MDButton ok = mDialog.getActionButton(DialogAction.POSITIVE);
+    private void setMBOnClick(View view) {
+        MDButton ok      = mDialog.getActionButton(DialogAction.POSITIVE);
         MDButton guardar = mDialog.getActionButton(DialogAction.NEGATIVE);
         setOkButtonIOnClick(ok);
         setGuardarButtonOnClick(guardar);
     }
 
-    private void setOkButtonIOnClick(MDButton okbutton){
+    private void setOkButtonIOnClick(MDButton okbutton) {
         okbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -351,57 +359,57 @@ public class EditPlaces{
         });
     }
 
-    private void setGuardarButtonOnClick(MDButton guardar){
+    private void setGuardarButtonOnClick(MDButton guardar) {
         final EditPlaces ep = this;
         guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               callbacks.onSaveToDb(ep);
+                callbacks.onSaveToDb(ep);
             }
         });
     }
 
-    public void hideDialog (){
+    public void hideDialog() {
         mDialog.hide();
     }
 
-    private void setDialogIteractions(View v){
+    private void setDialogIteractions(View v) {
         setGuardOnIncidenceSelect(v);
         setMBOnClick(v);
     }
 
-    private void enableIncTypeSp(View v){
+    private void enableIncTypeSp(View v) {
         Spinner sp = v.findViewById(R.id.tipoincidncia);
         sp.setEnabled(true);
     }
 
-    private void handleOnIncidenceSelect(View v){
+    private void handleOnIncidenceSelect(View v) {
         String inc = getIncidenceType(v);
-        if(checkIncidence(inc)){
+        if (checkIncidence(inc)) {
             enableIncTypeSp(v);
-            incTypelist.set(0,"Seleccione");
+            incTypelist.set(0, "Seleccione");
             increasonAdapter.notifyDataSetChanged();
-        }else{
+        } else {
             disableSpinner(v);
-            incTypelist.set(0,"N/A");
+            incTypelist.set(0, "N/A");
             increasonAdapter.notifyDataSetChanged();
         }
     }
 
-    private void clearTextFields(){
+    private void clearTextFields() {
         clearElementName();
         clearApName();
     }
 
-    private void clearElementName(){
+    private void clearElementName() {
         gedit.setText("");
     }
 
-    private void clearApName(){
+    private void clearApName() {
         apedit.setText("");
     }
 
-    private void setGuardOnIncidenceSelect(final View v){
+    private void setGuardOnIncidenceSelect(final View v) {
         Spinner sp = v.findViewById(R.id.incidencia);
         sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
@@ -422,6 +430,7 @@ public class EditPlaces{
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 handleOnIncidenceSelect(v);
             }
+
             /**
              * Callback method to be invoked when the selection disappears from this
              * view. The selection can disappear for instance when touch is activated
@@ -436,32 +445,32 @@ public class EditPlaces{
         });
     }
 
-    private String getGuardName(View v){
+    private String getGuardName(View v) {
         return gedit.getText().toString();
     }
 
-    private String getApName(View v){
+    private String getApName(View v) {
         return apedit.getText().toString();
     }
 
-    private String getIncidenceType(View v){
+    private String getIncidenceType(View v) {
         Spinner itype = v.findViewById(R.id.incidencia);
         return itype.getSelectedItem().toString();
     }
 
-    private String getIncidenceReason(View v){
+    private String getIncidenceReason(View v) {
         Spinner ireason = v.findViewById(R.id.tipoincidncia);
         return ireason.getSelectedItem().toString();
     }
 
-    private void setUpIncidences(){
+    private void setUpIncidences() {
         incList = new ArrayList<>();
         incList.add("Tiempo ordinario");
         incList.add("Tiempo extra");
         incList.add("Otro");
     }
 
-    private void incidencesReasons(){
+    private void incidencesReasons() {
         incTypelist = new ArrayList<>();
         incTypelist.add("N/A");
         incTypelist.add("Falta");

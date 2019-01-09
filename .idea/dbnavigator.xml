@@ -23,23 +23,31 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="ed845a46-d122-46d8-b25d-a7d53264c99a">
+        <schema name="main" object-types="table" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="ed845a46-d122-46d8-b25d-a7d53264c99a">
-      <console name="Connection" type="STANDARD" />
+      <console name="Connection" type="STANDARD" schema="" session="Main" />
     </connection>
     <connection id="fd4c3c43-0b47-4025-866d-3a6c4abc49ae">
-      <console name="DSC Remote" type="STANDARD"><![CDATA[select * from users;]]></console>
+      <console name="DSC Remote" type="STANDARD" schema="" session="Main"><![CDATA[select * from users;]]></console>
+    </connection>
+    <connection id="e42eaf9b-6205-48e9-af84-d5a32df35b80">
+      <console name="Connection 1" type="STANDARD" schema="" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="ed845a46-d122-46d8-b25d-a7d53264c99a" />
     <connection id="fd4c3c43-0b47-4025-866d-3a6c4abc49ae" />
+    <connection id="e42eaf9b-6205-48e9-af84-d5a32df35b80" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-list connection-id="fd4c3c43-0b47-4025-866d-3a6c4abc49ae" dataset="vialogik_dscic.devices" active-filter-id="" />
-    <filter-list connection-id="ed845a46-d122-46d8-b25d-a7d53264c99a" dataset="main.APOSTAMIENTOS" active-filter-id="" />
+    <filter-list connection-id="ed845a46-d122-46d8-b25d-a7d53264c99a" dataset="main.APOSTAMIENTOS" active-filter-id="EMPTY_FILTER" />
     <filter-list connection-id="ed845a46-d122-46d8-b25d-a7d53264c99a" dataset="main.CLIENTES" active-filter-id="" />
     <filter-list connection-id="ed845a46-d122-46d8-b25d-a7d53264c99a" dataset="main.sqlite_sequence" active-filter-id="" />
     <filter-list connection-id="ed845a46-d122-46d8-b25d-a7d53264c99a" dataset="main.ELEMENTOS" active-filter-id="e3c8f257-ccde-40b8-b33b-7b89b30a7cbb">
@@ -77,7 +85,7 @@
           <description value="InApp Database" />
           <database-type value="SQLITE" />
           <config-type value="BASIC" />
-          <database-version value="3.0" />
+          <database-version value="3.2" />
           <driver-source value="BUILTIN" />
           <driver-library value="" />
           <driver value="" />
@@ -86,7 +94,7 @@
           <port value="" />
           <database value="" />
           <files>
-            <file path="C:\Users\DSC_Innovation\Documents\AndroidStudio\DeviceExplorer\motorola-moto_c-0123456789ABCDEF\data\data\mx.com.vialogika.dscintramuros\databases\dscintramuros" schema="main" />
+            <file path="C:\Users\Javier Ramirez\Documents\AndroidStudio\DeviceExplorer\motorola-moto_e5-ZY322RFLSF\data\data\mx.com.vialogika.mist\databases\dscintramuros" schema="main" />
           </files>
           <os-authentication value="false" />
           <empty-password value="false" />
@@ -106,6 +114,12 @@
           <key-file value="" />
           <key-passphrase value="" />
         </ssh-settings>
+        <ssl-settings>
+          <active value="false" />
+          <certificate-authority-file value="" />
+          <client-certificate-file value="" />
+          <client-key-file value="" />
+        </ssl-settings>
         <details>
           <charset value="UTF-8" />
           <session-management value="true" />
@@ -184,6 +198,99 @@
           <key-file value="" />
           <key-passphrase value="" />
         </ssh-settings>
+        <ssl-settings>
+          <active value="false" />
+          <certificate-authority-file value="" />
+          <client-certificate-file value="" />
+          <client-key-file value="" />
+        </ssl-settings>
+        <details>
+          <charset value="UTF-8" />
+          <session-management value="true" />
+          <ddl-file-binding value="true" />
+          <database-logging value="false" />
+          <connect-automatically value="true" />
+          <restore-workspace value="true" />
+          <restore-workspace-deep value="true" />
+          <environment-type value="default" />
+          <idle-time-to-disconnect value="30" />
+          <idle-time-to-disconnect-pool value="5" />
+          <password-expiry-time value="10" />
+          <max-connection-pool-size value="7" />
+          <alternative-statement-delimiter value="" />
+        </details>
+        <object-filters hide-empty-schemas="false">
+          <object-type-filter use-master-settings="true">
+            <object-type name="SCHEMA" enabled="true" />
+            <object-type name="USER" enabled="true" />
+            <object-type name="ROLE" enabled="true" />
+            <object-type name="PRIVILEGE" enabled="true" />
+            <object-type name="CHARSET" enabled="true" />
+            <object-type name="TABLE" enabled="true" />
+            <object-type name="VIEW" enabled="true" />
+            <object-type name="MATERIALIZED_VIEW" enabled="true" />
+            <object-type name="NESTED_TABLE" enabled="true" />
+            <object-type name="COLUMN" enabled="true" />
+            <object-type name="INDEX" enabled="true" />
+            <object-type name="CONSTRAINT" enabled="true" />
+            <object-type name="DATASET_TRIGGER" enabled="true" />
+            <object-type name="DATABASE_TRIGGER" enabled="true" />
+            <object-type name="SYNONYM" enabled="true" />
+            <object-type name="SEQUENCE" enabled="true" />
+            <object-type name="PROCEDURE" enabled="true" />
+            <object-type name="FUNCTION" enabled="true" />
+            <object-type name="PACKAGE" enabled="true" />
+            <object-type name="TYPE" enabled="true" />
+            <object-type name="TYPE_ATTRIBUTE" enabled="true" />
+            <object-type name="ARGUMENT" enabled="true" />
+            <object-type name="DIMENSION" enabled="true" />
+            <object-type name="CLUSTER" enabled="true" />
+            <object-type name="DBLINK" enabled="true" />
+          </object-type-filter>
+          <object-name-filters />
+        </object-filters>
+      </connection>
+      <connection id="e42eaf9b-6205-48e9-af84-d5a32df35b80" active="true">
+        <database>
+          <name value="Connection 1" />
+          <description value="" />
+          <database-type value="SQLITE" />
+          <config-type value="BASIC" />
+          <database-version value="9999.0" />
+          <driver-source value="BUILTIN" />
+          <driver-library value="" />
+          <driver value="" />
+          <url-type value="FILE" />
+          <host value="" />
+          <port value="" />
+          <database value="" />
+          <files>
+            <file path="" schema="main" />
+          </files>
+          <os-authentication value="false" />
+          <empty-password value="false" />
+          <user value="" />
+          <password value="" />
+        </database>
+        <properties>
+          <auto-commit value="false" />
+        </properties>
+        <ssh-settings>
+          <active value="false" />
+          <proxy-host value="" />
+          <proxy-port value="22" />
+          <proxy-user value="" />
+          <proxy-password value="" />
+          <auth-type value="PASSWORD" />
+          <key-file value="" />
+          <key-passphrase value="" />
+        </ssh-settings>
+        <ssl-settings>
+          <active value="false" />
+          <certificate-authority-file value="" />
+          <client-certificate-file value="" />
+          <client-key-file value="" />
+        </ssl-settings>
         <details>
           <charset value="UTF-8" />
           <session-management value="true" />

@@ -103,9 +103,8 @@ public class restricted_consult extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-            View root = null;
             initializeVetados();
-            root = inflater.inflate(R.layout.fragment_restricted_consult, container, false);
+            View root = inflater.inflate(R.layout.fragment_restricted_consult, container, false);
             getItems(root);
             setup();
             setListeners();

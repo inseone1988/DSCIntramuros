@@ -19,3 +19,7 @@ app/proguard-rules.pro
 app/release/app-release.apk
 app/release/mist-beta.apk
 build.gradle
+.idea/caches/build_file_checksums.ser
+.idea/dbnavigator.xml
+app/release/mist-beta-build-1150.apk
+app/release/01102018/app-release.apk

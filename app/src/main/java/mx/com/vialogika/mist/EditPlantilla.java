@@ -167,7 +167,6 @@ import java.util.List;
                         }catch(JSONException error){
                             Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
                         }
-
                     }
                 })
                 .show();
