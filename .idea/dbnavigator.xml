@@ -25,7 +25,7 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="ed845a46-d122-46d8-b25d-a7d53264c99a">
-        <schema name="main" object-types="table" />
+        <schema name="main" object-types="view, table" />
       </connection>
     </loaded-nodes>
   </component>
@@ -39,6 +39,9 @@
     <connection id="e42eaf9b-6205-48e9-af84-d5a32df35b80">
       <console name="Connection 1" type="STANDARD" schema="" session="Main" />
     </connection>
+  </component>
+  <component name="DBNavigator.Project.DatabaseFileManager">
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="ed845a46-d122-46d8-b25d-a7d53264c99a" />

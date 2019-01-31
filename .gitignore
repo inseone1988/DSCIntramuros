@@ -23,3 +23,5 @@ build.gradle
 .idea/dbnavigator.xml
 app/release/mist-beta-build-1150.apk
 app/release/01102018/app-release.apk
+
+*.apk

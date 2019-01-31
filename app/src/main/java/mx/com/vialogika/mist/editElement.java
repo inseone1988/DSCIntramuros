@@ -131,8 +131,8 @@ public class editElement extends Activity {
     private void getItems(){
         btn = findViewById(R.id.submit_element);
         nombre = findViewById(R.id.element_name);
-        apellidoP = findViewById(R.id.element_ln);
-        apellidoM = findViewById(R.id.element_fname);
+        apellidoP = findViewById(R.id.element_fname);
+        apellidoM = findViewById(R.id.element_ln);
         dropdown = findViewById(R.id.element_type);
         imageview = findViewById(R.id.picture);
         grupoSpin = findViewById(R.id.grupos);
@@ -161,9 +161,8 @@ public class editElement extends Activity {
         btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                btn.setEnabled(false);
                 hideKeyboard();
-                //Submit data to database and network
-                //First local database
                 if(verifyInputs()){
                     try {
                         final Long  insId = saveElement();
