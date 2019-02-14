@@ -25,7 +25,7 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="ed845a46-d122-46d8-b25d-a7d53264c99a">
-        <schema name="main" object-types="view, table" />
+        <schema name="main" object-types="table, view" />
       </connection>
     </loaded-nodes>
   </component>
@@ -88,7 +88,7 @@
           <description value="InApp Database" />
           <database-type value="SQLITE" />
           <config-type value="BASIC" />
-          <database-version value="3.2" />
+          <database-version value="3.21" />
           <driver-source value="BUILTIN" />
           <driver-library value="" />
           <driver value="" />

@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "568460581191",
+    "firebase_url": "https://dhldp-1482721846581.firebaseio.com",
+    "project_id": "dhldp-1482721846581",
+    "storage_bucket": "dhldp-1482721846581.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:568460581191:android:d94d7c8b79fec6d1",
+        "android_client_info": {
+          "package_name": "mx.com.vialogika.mist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "568460581191-h2m7lpnd1gjutr1d7rkgviu41fh9stqu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcvLML-P2DkkhXDD0rOKZLoABP68g1FL4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:568460581191:android:59a2ac1716080e4b",
+        "android_client_info": {
+          "package_name": "mx.com.vialogika.mistclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "568460581191-h2m7lpnd1gjutr1d7rkgviu41fh9stqu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcvLML-P2DkkhXDD0rOKZLoABP68g1FL4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
