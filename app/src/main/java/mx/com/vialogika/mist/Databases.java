@@ -679,7 +679,9 @@ public class Databases {
 
     public static void deleteApFromDb(long id){
         Plantillas pl = Plantillas.findById(Plantillas.class,id);
-        pl.delete();
+        if(pl != null){
+            pl.delete();
+        }
     }
 
     public static void setPlantillaSaved(long id){

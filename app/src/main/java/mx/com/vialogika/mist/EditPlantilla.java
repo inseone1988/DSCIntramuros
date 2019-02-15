@@ -61,7 +61,6 @@ import java.util.List;
                     @Override
                     public void onApDeleted(int position) {
                         mAps.remove(position);
-                        mRecyclerview.removeViewAt(position);
                         mAdapter.notifyItemRemoved(position);
                         mAdapter.notifyItemRangeChanged(position,mAps.size());
                     }
@@ -204,6 +203,7 @@ import java.util.List;
                 VH.element_action_menu.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        v.setEnabled(false);
                         deleteAp(guard.getApid(),position);
                     }
                 });

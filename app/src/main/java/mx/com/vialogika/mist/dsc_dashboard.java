@@ -26,11 +26,11 @@ import java.util.List;
 import id.zelory.compressor.Compressor;
 
 
-interface fab{
+interface fab {
     void setFabClickListener();
 }
 
-public class dsc_dashboard extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks, fragment_dsc_plantillas.OnFragmentInteractionListener,dsc_elements.OnFragmentInteractionListener,dsc_apostamientos.OnFragmentInteractionListener,PIEFragment.OnFragmentInteractionListener {
+public class dsc_dashboard extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks, fragment_dsc_plantillas.OnFragmentInteractionListener, dsc_elements.OnFragmentInteractionListener, dsc_apostamientos.OnFragmentInteractionListener, PIEFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -40,10 +40,10 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
-    private CharSequence mTitle;
-    private List<Elementos> mElementos;
+    private CharSequence        mTitle;
+    private List<Elementos>     mElementos;
     private List<Apostamientos> mApostamientos;
-    static String images = "";
+    static  String              images = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +53,6 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
         setContentView(R.layout.activity_dsc_dashboard);
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
@@ -62,39 +61,39 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
 
     @Override
     protected void onActivityResult(int requestCode, final int resultCode, Intent data) {
-        if(ImagePicker.shouldHandle(requestCode,resultCode,data)){
+        if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             List<com.esafirm.imagepicker.model.Image> selImages = ImagePicker.getImages(data);
             images = getImagePaths(selImages);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private String compressImage(String imagePath){
+    private String compressImage(String imagePath) {
         File imageFile = new File(imagePath);
-        try{
+        try {
             return new Compressor(this).compressToFile(imageFile).getAbsolutePath();
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return "";
     }
 
-    private String getImagePaths(List<com.esafirm.imagepicker.model.Image> images){
+    private String getImagePaths(List<com.esafirm.imagepicker.model.Image> images) {
         String paths = "";
-        for(int i = 0; i < images.size();i++){
-            paths += compressImage(images.get(i).getPath())  + ",";
+        for (int i = 0; i < images.size(); i++) {
+            paths += compressImage(images.get(i).getPath()) + ",";
         }
         return paths;
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
 
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri){
+    public void onFragmentInteraction(Uri uri) {
 
     }
 
@@ -113,16 +112,16 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
         return null;
     }
 
-     @Override
+    @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        if(position <= 3){
+        if (position <= 3) {
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, getFragment(position + 1))
                     .commit();
-        }else{
-            if(position == 4){
+        } else {
+            if (position == 4) {
                 new MaterialDialog.Builder(this)
                         .content("Salir de la App")
                         .positiveText("Salir")
@@ -163,9 +162,9 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
         actionBar.setTitle(mTitle);
     }
 
-    public Fragment getFragment(int sectionid){
+    public Fragment getFragment(int sectionid) {
         Fragment fragment = null;
-        switch(sectionid){
+        switch (sectionid) {
             case 1:
                 fragment = new fragment_dsc_plantillas();
                 break;
@@ -189,7 +188,7 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
         this.images = images;
     }
 
-    public interface dashboardCallbacks{
+    public interface dashboardCallbacks {
         void onFilepickerActivityResult(int requestCode, final int resultCode, Intent data);
     }
 }
