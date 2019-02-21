@@ -122,19 +122,23 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
                     .commit();
         } else {
             if (position == 4) {
-                new MaterialDialog.Builder(this)
-                        .content("Salir de la App")
-                        .positiveText("Salir")
-                        .negativeText("Cancelar")
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                finishAndRemoveTask();
-                            }
-                        }).show();
+                confirmAppExit();
             }
         }
         //restoreActionBar();
+    }
+
+    private void confirmAppExit(){
+        new MaterialDialog.Builder(this)
+                .content("Salir de la App")
+                .positiveText("Salir")
+                .negativeText("Cancelar")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        finishAndRemoveTask();
+                    }
+                }).show();
     }
 
     public void onSectionAttached(int number) {
@@ -182,6 +186,11 @@ public class dsc_dashboard extends Activity implements NavigationDrawerFragment.
 
     public static String getImages() {
         return images;
+    }
+
+    @Override
+    public void onBackPressed() {
+        confirmAppExit();
     }
 
     public void setImages(String images) {
