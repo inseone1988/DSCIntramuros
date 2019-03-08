@@ -68,4 +68,16 @@
         android:text="@string/app_version"
         android:textSize="20sp" />
 
+    <TextView
+        android:id="@+id/stat_check"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:text="@string/service_status"
+        android:textAllCaps="false"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="18sp" />
+
 </LinearLayout>

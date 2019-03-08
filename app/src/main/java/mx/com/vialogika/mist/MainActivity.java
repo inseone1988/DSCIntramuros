@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.app.AlertDialog;
@@ -19,12 +20,15 @@ import android.widget.EditText;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Response;
@@ -56,6 +60,11 @@ public class MainActivity extends Activity {
     String imei_number;
     Button lgbutton;
     TextView progress;
+
+    private TextView statucCheck;
+
+    ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -69,11 +78,61 @@ public class MainActivity extends Activity {
                 loginUser();
             }
         });
+        statucCheck = findViewById(R.id.stat_check);
+        statucCheck.setOnClickListener(listener);
         setVersionText();
     }
 
     private void requestPermissionForImei(){
         ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_PHONE_STATE},1);
+    }
+
+    private View.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch(view.getId()){
+                case R.id.stat_check:
+                    runDiagnostic();
+                    break;
+            }
+        }
+    };
+
+    private void runDiagnostic(){
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title("Estado del servicio")
+                .customView(R.layout.service_status,true)
+                .positiveText("OK")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                    }
+                })
+                .build();
+        dialog.setOnShowListener(showListener);
+        View rootview = dialog.getCustomView();
+        getRootViewContent(rootview);
+        dialog.show();
+    }
+
+    private DialogInterface.OnShowListener showListener = new DialogInterface.OnShowListener() {
+        @Override
+        public void onShow(DialogInterface dialogInterface) {
+            String isConencted = getResources().getString(R.string.internet_conection);
+            String isOk = isConnected() ? "OK": "Sin internet";
+            String iscformat = String.format(isConencted,isOk);
+
+        }
+    };
+
+    private boolean isConnected(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
+    }
+
+    private void getRootViewContent(View v){
+        progressBar = findViewById(R.id.check_progress);
     }
 
     private void setVersionText(){

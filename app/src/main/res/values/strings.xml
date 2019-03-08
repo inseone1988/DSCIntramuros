@@ -143,4 +143,7 @@
     <string name="delete_success">Eliminado Correctamente</string>
     <string name="assign_ap">Asiganar apostamiento</string>
     <string name="media_output_error_text">Ha ocurrido un error al intentar crear el archivo, asegurese de que la tarjeta sd este insertada y la aplicacion tenga los permisos necesarios e intente de nuevo.</string>
+    <string name="service_status">Estado del servicio</string>
+    <string name="internet_conection">Internet : %1$s</string>
+    <string name="server_status">Servidor : %1$s</string>
 </resources>

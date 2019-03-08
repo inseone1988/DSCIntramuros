@@ -153,8 +153,11 @@ public class Plantillas extends SugarRecord<Plantillas> {
 
     public String getPhotoProfile() {
         List<Elementos> el = Elementos.find(Elementos.class,"GUARD_HASH = ?",this.guard_id);
-        this.photoProfile = el.get(0).getPerson_photo_path();
-        return photoProfile;
+        if (el.size() > 0){
+            this.photoProfile = el.get(0).getPerson_photo_path();
+            return photoProfile;
+        }
+        return "";
     }
 
     public void setPhotoProfile(String photoProfile) {

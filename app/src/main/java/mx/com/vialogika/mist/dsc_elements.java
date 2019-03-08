@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -156,8 +157,9 @@ public class dsc_elements extends Fragment {
 
         @Override
         public void onBindViewHolder(ElementViewHolder holder,int position){
-            final Elementos guard = mDataset.get(position);
-            final int deletePosition = position;
+            final Context   context        = holder.cv.getContext();
+            final Elementos guard          = mDataset.get(position);
+            final int       deletePosition = position;
             if(guard != null){
                 Bitmap guardProfilePhoto = profileImage(guard.getPerson_photo_path());
                 holder.element_fullname.setText(guard.getGuardFullName());
@@ -174,7 +176,7 @@ public class dsc_elements extends Fragment {
                                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        deleteElement(guard.getId(),deletePosition);
+                                        deleteElement(context,guard.getId(),deletePosition);
                                     }
                                 })
                                 .show();
@@ -217,7 +219,7 @@ public class dsc_elements extends Fragment {
             }
         }
 
-        public void deleteElement(Long element_id,final int position){
+        public void deleteElement(final Context context, Long element_id, final int position){
             //First try to notify server flag element
             final Elementos element = Elementos.findById(Elementos.class,element_id);
             Databases.requestDeleteElement(element.getGuardHash(), getActivity(), new Databases.callbacks() {
@@ -229,9 +231,9 @@ public class dsc_elements extends Fragment {
                             mDataset.remove(position);
                             dsc_elements.this.mAdapter.notifyItemRemoved(position);
                             dsc_elements.this.mAdapter.notifyItemRangeChanged(position,mDataset.size());
-                            Toast.makeText(getActivity(),R.string.delete_success,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context,R.string.delete_success,Toast.LENGTH_SHORT).show();
                         }else{
-                            Toast.makeText(getActivity(),response.getString("error"),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context,response.getString("error"),Toast.LENGTH_SHORT).show();
                         }
                     }catch(JSONException e){
                         e.printStackTrace();
